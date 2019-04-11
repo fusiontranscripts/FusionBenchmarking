@@ -1,0 +1,28 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+dat_filename = args[1]
+
+data = read.table(dat_filename, header=T, sep='\t')
+
+library('ggplot2')
+library('data.table')
+
+dt = data.table(data)
+dt_median_time = dt[,.(median_time_h=median(time_h, na.rm=T)), by=.(prog)][order(median_time_h)]
+
+data$prog = factor(data$prog, levels=factor(dt_median_time$prog))
+
+
+
+pdf_filename = paste(dat_filename, '.boxplot.pdf', sep='')
+pdf(pdf_filename)
+
+p = ggplot(data, aes(factor(prog), time_h)) +
+    geom_boxplot(outlier.shape=NA) +
+    theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+
+plot(p)
+
+dev.off()

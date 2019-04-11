@@ -1,0 +1,34 @@
+
+## hg19 coordinate liftovers and gene symbol aliases:
+
+using: /home/unix/bhaas/FUS/util/make_hg19_gene_coords_file.pl  to extract liftover coords.
+
+ie.
+
+    liftOver -gff ref_annot.gtf  /home/unix/bhaas/utilities/hg38ToHg19.over.chain.gz mapped unmapped
+    ~/GITHUB/CTAT_FUSIONS/FusionFilter/util/gtf_to_gene_spans.pl mapped > mapped.coords
+
+    then aggregate all coords across all hg19-transposed annotations:
+    Remake the coords and aliases files:
+    /home/unix/bhaas/FUS/util/make_hg19_gene_coords_file.pl
+
+
+## paralog clustering
+
+RepeatMasker-open-4-0-3/RepeatMasker/RepeatMasker -pa 6 -s -species human -xsmall ref_annot.cdna
+
+makeblastdb -in ref_annot.cdna.masked -dbtype nucl
+
+blastn -query ref_annot.cdna.masked -db ref_annot.cdna.masked -max_target_seqs 10000 -outfmt 6 -evalue 1e-3 -lcase_masking  -num_threads 20 -word_size 11  >  blast_pairs.outfmt6
+
+GITHUB/CTAT_FUSIONS/FusionFilter/util/paralog_clustering_util/outfmt6_add_percent_match_length.group_segments.pl blast_pairs.outfmt6 ../ref_annot.cdna.masked ../ref_annot.cdna.masked > blast_pairs.outfmt6.grouped
+
+GITHUB/CTAT_FUSIONS/FusionFilter/util/paralog_clustering_util/../blast_outfmt6_replace_trans_id_w_gene_symbol.pl ../ref_annot.cdna.masked blast_pairs.outfmt6.grouped > blast_pairs.outfmt6.grouped.genesym
+
+cat blast_pairs.outfmt6.grouped.genesym | sort -k4,4g -k3,3gr > blast_pairs.outfmt6.grouped.genesym.sorted
+
+GITHUB/CTAT_FUSIONS/FusionFilter/util/paralog_clustering_util/get_top_blast_pairs.pl blast_pairs.outfmt6.grouped.genesym.sorted > blast_pairs.outfmt6.grouped.genesym.sorted.top
+
+GITHUB/CTAT_FUSIONS/FusionFilter/util/paralog_clustering_util/outfmt6_add_percent_match_length.group_segments.to_Markov_Clustering.pl --outfmt6_grouped blast_pairs.outfmt6.grouped.genesym.sorted.top --min_pct_len 1 --min_per_id 90 --inflation_factor 5
+
+ln -s dump.out.blast_pairs.outfmt6.grouped.genesym.sorted.top.minLEN_1_pct_len.minPID_90.abc.mci.I50 paralog_clusters.dat

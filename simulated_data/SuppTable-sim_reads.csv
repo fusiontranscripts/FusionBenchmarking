@@ -1,0 +1,11 @@
+Simulated read length,simulated read data set name,modeled on original data,original data source
+sim_50,sim_adipose,ERR030880,ArrayExpress E-MTAB-513:ERR030880
+sim_50,sim_brain,ERR030882,ArrayExpress E-MTAB-513:ERR030882
+sim_50,sim_colon,ERR030884,ArrayExpress E-MTAB-513:ERR030884
+sim_50,sim_heart,ERR030886,ArrayExpress E-MTAB-513:ERR030886
+sim_50,sim_testis,ERR030873,ArrayExpress E-MTAB-513:ERR030873
+sim_101,sim1_reads,G27488.SNU-620.2,CCLE:b146a903-8d81-4d13-a630-22c944087bf4
+sim_101,sim2_reads,G28535.OVTOKO,CCLE:24799388-008d-4011-a181-f4b2070b8bb0
+sim_101,sim3_reads,G25214.MKN7,CCLE:23056430-2489-4922-ac0b-299b7f43e74e
+sim_101,sim4_reads,G30608.SW_780,CCLE:a3e56efd-459e-44a2-be92-1abf59ee7ff3
+sim_101,sim5_reads,G27376.COLO_792.1,CCLE:5c9df572-dd10-420f-980a-17ae004dfc08
