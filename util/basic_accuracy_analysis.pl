@@ -22,17 +22,6 @@ $pred_file_listing = &ensure_full_path($pred_file_listing);
 $truth_fusions_file = &ensure_full_path($truth_fusions_file);
 
 
-unless ($ENV{FUSION_SIMULATOR}) {
-
-    if (-d "$ENV{HOME}/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit") {
-        $ENV{FUSION_SIMULATOR} = "~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit";
-    }
-    else {
-        die "Error, must set env var FUSION_SIMULATOR to point to base dir of\n"
-            . "     git clone https://github.com/FusionSimulatorToolkit/FusionSimulatorToolkit ";
-    }
-}
-
 unless ($ENV{FUSION_ANNOTATOR}) {
 
     if (-d "$ENV{HOME}/GITHUB/CTAT_FUSIONS/FusionAnnotator") {
@@ -51,7 +40,7 @@ unless ($ENV{TRINITY_HOME}) {
 
 
 my $benchmark_data_basedir = "$FindBin::Bin/..";
-my $benchmark_toolkit_basedir = $ENV{FUSION_SIMULATOR} . "/benchmarking";
+my $benchmark_toolkit_basedir = "$FindBin::Bin/../benchmarking";
 my $fusion_annotator_basedir = $ENV{FUSION_ANNOTATOR};
 my $trinity_home = $ENV{TRINITY_HOME};
 
