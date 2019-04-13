@@ -10,16 +10,6 @@ use lib ("$FindBin::Bin/../PerlLib");
 use Pipeliner;
 use Process_cmd;
 
-unless ($ENV{FUSION_SIMULATOR}) {
-
-    if (-d "$ENV{HOME}/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit") {
-        $ENV{FUSION_SIMULATOR} = "~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit";
-    }
-    else {
-        die "Error, must set env var FUSION_SIMULATOR to point to base dir of\n"
-            . "     git clone https://github.com/FusionSimulatorToolkit/FusionSimulatorToolkit ";
-    }
-}
 
 unless ($ENV{FUSION_ANNOTATOR}) {
 
@@ -44,7 +34,7 @@ if (basename(cwd()) ne "cancer_cell_lines") {
 
 
 my $benchmark_data_basedir = "$FindBin::Bin/..";
-my $benchmark_toolkit_basedir = $ENV{FUSION_SIMULATOR} . "/benchmarking";
+my $benchmark_toolkit_basedir = "$FindBin::Bin/../benchmarking";
 my $fusion_annotator_basedir = $ENV{FUSION_ANNOTATOR};
 my $trinity_home = $ENV{TRINITY_HOME};
 
