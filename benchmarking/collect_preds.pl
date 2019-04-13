@@ -57,7 +57,11 @@ my %prog_type_to_file_parser = (
 
     'ARRIBA' => 'ARRIBA_parser',
 
-    'STARCHIP' => 'STARCHIP_parser'
+    'STARCHIP' => 'STARCHIP_parser',
+
+    'TrinityFusion-D' => 'TrinityFusion_parser',
+    'TrinityFusion-C' => 'TrinityFusion_parser',
+    'TrinityFusion-UC' => 'TrinityFusion_parser'
     
     );
 
