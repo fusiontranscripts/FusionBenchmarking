@@ -10,17 +10,6 @@ use lib ("$FindBin::Bin/../PerlLib");
 use Pipeliner;
 use Process_cmd;
 
-unless ($ENV{FUSION_SIMULATOR}) {
-
-    if (-d "$ENV{HOME}/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit") {
-        $ENV{FUSION_SIMULATOR} = "~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit";
-    }
-    else {
-        die "Error, must set env var FUSION_SIMULATOR to point to base dir of\n"
-            . "     git clone https://github.com/FusionSimulatorToolkit/FusionSimulatorToolkit ";
-    }
-}
-
 unless ($ENV{FUSION_ANNOTATOR}) {
 
     if (-d "$ENV{HOME}/GITHUB/CTAT_FUSIONS/FusionAnnotator") {
@@ -54,7 +43,7 @@ $sim_fusion_TPM_values = &ensure_full_path($sim_fusion_TPM_values) if ($sim_fusi
 
 
 my $benchmark_data_basedir = "$FindBin::Bin/..";
-my $benchmark_toolkit_basedir = $ENV{FUSION_SIMULATOR} . "/benchmarking";
+my $benchmark_toolkit_basedir = "$FindBin::Bin/../benchmarking";
 my $fusion_annotator_basedir = $ENV{FUSION_ANNOTATOR};
 my $trinity_home = $ENV{TRINITY_HOME};
 
@@ -120,8 +109,8 @@ main: {
     ## Compare TP and FP before and after paralog-equiv
 
     $cmd = "$benchmark_toolkit_basedir/plotters/plot_before_vs_after_filt_TP_FP_compare.Rscript "
-        . " __analyze_allow_reverse/all.scored.ROC.best.dat "
-        . " __analyze_allow_rev_and_paralogs/all.scored.ROC.best.dat ";
+        . " __analyze_allow_reverse/all.scored.preds.ROC.best.dat "
+        . " __analyze_allow_rev_and_paralogs/all.scored.preds.ROC.best.dat ";
     
     $pipeliner->add_commands(new Command($cmd, "before_vs_after_okPara.ok"));
 
@@ -179,22 +168,22 @@ sub score_and_plot_replicates {
     $cmd = "$benchmark_toolkit_basedir/plotters/AUC_boxplot.from_single_summary_AUC_file.Rscript all.AUC.dat";
     $pipeliner->add_commands(new Command($cmd, "boxplot_rep_aucs.ok"));
 
-    $cmd = 'find . -regex ".*.scored" -exec cat {} \\; > all.scored.preds';
+    $cmd = 'find . -regex ".*.scored" -exec cat {} \\; > all.scored.preds.preds';
     $pipeliner->add_commands(new Command($cmd, "gather_scores.ok"));
 
     $pipeliner->run();
 
     
-    &ROC_and_PR("all.scored.preds");
+    &ROC_and_PR("all.scored.preds.preds");
         
     # examine sensitivity vs. expression level
 
     if ($fusion_TPMs) {
-        $cmd = "$benchmark_toolkit_basedir/fusion_preds_sensitivity_vs_expr.avg_replicates.pl all.scored.preds $fusion_TPMs > all.scored.preds.sensitivity_vs_expr.dat";
+        $cmd = "$benchmark_toolkit_basedir/fusion_preds_sensitivity_vs_expr.avg_replicates.pl all.scored.preds.preds $fusion_TPMs > all.scored.preds.preds.sensitivity_vs_expr.dat";
         $pipeliner->add_commands(new Command($cmd, "sens_vs_expr.avg_reps.ok"));
         
         $cmd = "$trinity_home/Analysis/DifferentialExpression/PtR  "
-            . " -m all.scored.preds.sensitivity_vs_expr.dat "
+            . " -m all.scored.preds.preds.sensitivity_vs_expr.dat "
             . " --heatmap "
             . " --sample_clust none --gene_clust ward "
             . " --heatmap_colorscheme 'black,purple,yellow'";
