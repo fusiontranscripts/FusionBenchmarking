@@ -1,0 +1,29 @@
+#!/usr/bin/env Rscript
+
+options(stringsAsFactors = FALSE)
+
+suppressPackageStartupMessages(library("argparse"))
+
+parser = ArgumentParser()
+
+parser$add_argument("--datafile", help="input data file", required=TRUE, nargs=1)
+parser$add_argument("--progname", help="fusion prog name", required=TRUE, nargs=1)
+args = parser$parse_args()
+
+
+library(tidyverse)
+
+pdf(paste0(args$progname, ".plot.pdf"))
+data = read.table(args$datafile, header=T)
+
+data = data %>% filter( min_sum_frags <= 10 & min_J <= 1 & min_S <= 1)
+
+data = data %>% unite(col='JS', min_J, min_S, sep=',')
+
+data = data %>% filter(prog==args$progname & JS != "1,1")
+
+data %>% ggplot(aes(x=min_sum_frags, y=F1, color=JS)) + geom_point() + geom_line()
+
+message("see plot file: ", paste0(args$progname, ".plot.pdf"))
+
+quit(save = "no", status = 0, runLast = FALSE)

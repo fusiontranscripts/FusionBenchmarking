@@ -1,0 +1,37 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+if (length(args) != 1) {
+    stop("require param: file.auc ")
+}
+
+
+auc = args[1]
+
+data = read.table(auc, header=F)
+
+
+library('data.table')
+
+colnames(data) = c('progname', 'auc')
+
+dt = data.table(data)
+
+
+
+barplot_filename = paste0(auc, ".barplot.pdf")
+pdf(barplot_filename)
+
+prognames = levels(dt[,progname])
+colors = rainbow(length(prognames))
+names(colors) = prognames
+
+dt = dt[order(-auc),]
+
+ordered_prognames = dt[,progname]
+barplot(dt[,auc], names.arg=ordered_prognames, las=2, cex.axis=0.5, cex.names=0.5, col=colors[ordered_prognames])
+
+
+dev.off()
+

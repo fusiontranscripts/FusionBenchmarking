@@ -1,0 +1,39 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+if (length(args) < 2) {
+    stop("require param: fileA.auc fileB.auc ...   ")
+}
+
+
+summary_table = NULL
+
+for (auc in args) {
+
+	data = read.table(auc, header=F, row.names=1)
+    data = t(data)
+	rownames(data) = c(auc)
+
+	if (is.null(summary_table)) {
+    	summary_table = data
+    }
+	else {
+    	
+    	summary_table = rbind(summary_table, data[,colnames(summary_table)])
+    }
+
+}
+
+
+summary_table = summary_table[,rev(order(apply(summary_table, 2, median)))]
+
+print(summary_table)
+
+write.table(summary_table, file="auc.summary_table.txt", quote=F, sep="\t")
+
+pdf("auc.boxplot.pdf")
+boxplot(summary_table, las=2, outline=F)
+
+dev.off()
+

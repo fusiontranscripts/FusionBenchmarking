@@ -1,0 +1,26 @@
+
+
+~/GITHUB/CTAT_FUSIONS/FusionAnnotator/FusionAnnotator --annotate preds.collected -C 2 > preds.collected.wAnnot
+
+~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit/benchmarking/filter_collected_preds.pl preds.collected.wAnnot > preds.collected.wAnnot.filt
+
+~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit/benchmarking/collected_preds_to_fusion_prog_support_listing.pl preds.collected.wAnnot.filt > preds.collected.wAnnot.filt.byProg
+
+~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit/benchmarking/define_truth_n_unsure_set.pl preds.collected.wAnnot.filt.byProg 4
+
+~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit/benchmarking/fusion_preds_to_TP_FP_FN.wrapper.pl --fusion_preds preds.collected.wAnnot.filt --truth_fusions preds.collected.wAnnot.filt.byProg.min_4.truth_set --unsure_fusions preds.collected.wAnnot.filt.byProg.min_4.unsure_set --allow_reverse_fusion > min4.score
+
+~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit/benchmarking/all_TP_FP_FN_to_ROC.pl min4.score > min4.score.roc
+
+
+~/GITHUB/CTAT_FUSIONS/FusionSimulatorToolkit/benchmarking/plotters/plot_ROC.Rscript min4.score.roc 
+
+
+
+
+## sensitivty vs. expression
+
+fusion_preds_sensitivity_vs_expr.pl preds.collected.scored fusion_TPM_values.dat > sensitivity_vs_expr.dat
+
+ ~/GITHUB/trinityrnaseq/Analysis/DifferentialExpression/PtR  -m sensitivity_vs_expr.dat --heatmap --sample_clust none --heatmap_colorscheme 'black,yellow'
+

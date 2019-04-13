@@ -1,0 +1,48 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+if (length(args) != 3) {
+    stop("require params: auc.50.dat auc.101.dat plot_name.pdf")
+}
+
+auc_50_dat_filename = args[1]
+auc_101_dat_filename = args[2]
+plot_name = args[3]
+
+auc_50_dat = read.table(auc_50_dat_filename, header=F)
+auc_101_dat = read.table(auc_101_dat_filename, header=F)
+
+df_50_dat = data.frame(read_type=c('len50'), progname=auc_50_dat[,1], auc=auc_50_dat[,2])
+df_101_dat = data.frame(read_type=c('len101'), progname=auc_101_dat[,1], auc=auc_101_dat[,2])
+
+all_dat = rbind(df_50_dat, df_101_dat)
+
+
+## plot it
+library('ggplot2')
+library('data.table')
+
+dt = data.table(all_dat)
+
+dt_len101 = dt[read_type == "len101"]
+
+dt_auc_median = dt_len101[,.(auc.median=median(auc)), by=.(progname)][order(-auc.median)]
+
+all_dat$progname = factor(all_dat$progname, levels=factor(dt_auc_median$progname))
+all_dat$read_type = factor(all_dat$read_type, levels=factor(c('len101', 'len50')))
+
+
+p = ggplot(all_dat, aes(factor(progname), auc)) +
+    geom_boxplot(aes(fill=read_type), outlier.shape=NA) +
+    theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5));
+
+pdf(plot_name)
+plot(p)
+
+dev.off()
+
+
+
+
+

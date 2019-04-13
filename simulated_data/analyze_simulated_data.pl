@@ -179,22 +179,22 @@ sub score_and_plot_replicates {
     $cmd = "$benchmark_toolkit_basedir/plotters/AUC_boxplot.from_single_summary_AUC_file.Rscript all.AUC.dat";
     $pipeliner->add_commands(new Command($cmd, "boxplot_rep_aucs.ok"));
 
-    $cmd = 'find . -regex ".*.scored" -exec cat {} \\; > all.scored';
+    $cmd = 'find . -regex ".*.scored" -exec cat {} \\; > all.scored.preds';
     $pipeliner->add_commands(new Command($cmd, "gather_scores.ok"));
 
     $pipeliner->run();
 
     
-    &ROC_and_PR("all.scored");
+    &ROC_and_PR("all.scored.preds");
         
     # examine sensitivity vs. expression level
 
     if ($fusion_TPMs) {
-        $cmd = "$benchmark_toolkit_basedir/fusion_preds_sensitivity_vs_expr.avg_replicates.pl all.scored $fusion_TPMs > all.scored.sensitivity_vs_expr.dat";
+        $cmd = "$benchmark_toolkit_basedir/fusion_preds_sensitivity_vs_expr.avg_replicates.pl all.scored.preds $fusion_TPMs > all.scored.preds.sensitivity_vs_expr.dat";
         $pipeliner->add_commands(new Command($cmd, "sens_vs_expr.avg_reps.ok"));
         
         $cmd = "$trinity_home/Analysis/DifferentialExpression/PtR  "
-            . " -m all.scored.sensitivity_vs_expr.dat "
+            . " -m all.scored.preds.sensitivity_vs_expr.dat "
             . " --heatmap "
             . " --sample_clust none --gene_clust ward "
             . " --heatmap_colorscheme 'black,purple,yellow'";

@@ -1,0 +1,25 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+if (length(args) < 1) {
+    stop("require param: summary_all.auc ")
+}
+
+
+
+auc = args[1]
+
+data = read.table(auc, header=F)
+
+l = split(data, data[,1])
+
+l2 = lapply(l, function(x) { x[,2] })
+
+
+pdf_filename = paste0(auc, ".AUC_boxplot.pdf")
+pdf(pdf_filename)
+boxplot(l2[ rev(order(sapply(l2, function(x) { median(x) })) ) ], las=2, outline=F)
+
+dev.off()
+

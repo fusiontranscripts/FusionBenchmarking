@@ -1,0 +1,173 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+if (length(args) == 0) {
+	stop("require param: fusion.progname.pred.TP_FP_FN.ROC")
+}
+
+
+dat_filename = args[1]
+pdf_filename = paste(dat_filename, '.ROC_plot.pdf', sep='')
+pdf(pdf_filename, width=10)
+
+layout(matrix(c(1,2), 1, 2, byrow=T), widths=c(2.5,1)) 
+
+lwd=1
+
+make_legend = function(prognames, prog_colors) {
+    legend_cols = 1
+    legend_cex = 0.75
+    legend('topleft', ncol=legend_cols, legend=prognames, col=prog_colors, pch=seq(1,length(prognames)), lty=seq(1,length(prognames)), cex=legend_cex, lwd=lwd);
+}
+
+
+main = function() {
+
+	data = read.table(dat_filename, header=T)
+	data = cbind(data, FDR=1-data$PPV)
+	
+	max_TP = max(data$TP)
+    max_FP = max(data$FP)
+	
+	# split by progname
+	p = split(data, data$prog);
+	prognames = names(p)
+	prog_colors = rainbow(length(prognames))
+	
+
+	#############################
+	## Plot TP vs. FP as ROC-like
+    
+	print("Plotting TP vs. FP")
+	plot(0,0, xlim=c(0,max_FP), ylim=c(0,max_TP), xlab="FP", ylab="TP", main="TP vs. FP", t='n')
+	
+	for (i in 1:length(prognames)) {
+        prog_data = p[[ prognames[i] ]]
+
+        if (nrow(prog_data) > 0) {
+           points(prog_data$FP, prog_data$TP, col=prog_colors[i], pch=i, lty=i, t='b', lwd=lwd)
+           #text(prog_data$FP, prog_data$TP, labels=prognames[i], cex=0.6, pos=4)
+        }
+    }
+
+	plot.new()
+    make_legend(prognames, prog_colors)
+    
+
+	###################
+	## Plot TPR ~ FDR
+	
+	print("Plotting TPR ~ FDR")
+	max_TPR = max(data$TPR)
+	max_FDR = max(data$FDR)
+
+	plot(0,0, xlim=c(0,max_FDR), ylim=c(0,max_TPR), xlab="FDR", ylab="TPR", main="TPR vs. FDR", t='n')
+	
+	for (i in 1:length(prognames)) {
+        prog_data = p[[ prognames[i] ]]
+
+        if (nrow(prog_data) > 0) {
+           points(prog_data$FDR, prog_data$TPR, col=prog_colors[i], pch=i, lty=i, t='b', lwd=lwd)
+        }
+    }
+	
+	plot.new()
+    make_legend(prognames, prog_colors)
+     	
+
+	###################
+	## Plot TPR ~ PPV
+	
+	print("Plotting TPR ~ FDR")
+	max_TPR = max(data$TPR)
+	max_PPV = max(data$PPV)
+
+	plot(0,0, ylim=c(0,max_PPV), xlim=c(0,max_TPR), ylab="PPV", xlab="TPR", main="TPR vs. PPV", t='n')
+	
+	for (i in 1:length(prognames)) {
+        prog_data = p[[ prognames[i] ]]
+
+        if (nrow(prog_data) > 0) {
+           points(prog_data$TPR, prog_data$PPV, col=prog_colors[i], pch=i, lty=i, t='b', lwd=lwd)
+        }
+    }
+	
+	plot.new()
+    make_legend(prognames, prog_colors)
+
+	#########################
+	## Plot F1 ~ min_frag_sum
+
+	print("Plotting F1 ~ min_frag_sum")
+	max_min_frag_sum = 20
+	max_F1 = max(data$F1, na.rm=T)
+	
+	plot(0,0, xlim=c(0,max_min_frag_sum), ylim=c(0,max_F1), xlab="min_sum_frags", ylab="F1", main="F1 vs. min_sum_frags", t='n')
+	
+	for (i in 1:length(prognames)) {
+        prog_data = p[[ prognames[i] ]]
+
+        if (nrow(prog_data) > 0) {
+           points(prog_data$min_sum_frags, prog_data$F1, col=prog_colors[i], pch=i, lty=i, t='b', lwd=lwd)
+        }
+    }
+	
+	plot.new()
+    make_legend(prognames, prog_colors)
+
+
+
+	#########################
+	## Plot TP, FP for just the single most accurate (highest F1) data point.
+
+	print("Plotting TP,FP for max accuracy point")
+	
+
+	best_df = NULL
+	
+	for (i in 1:length(prognames)) {
+        prog_data = p[[ prognames[i] ]]
+		prog_data = prog_data[! is.na(prog_data$F1),]		
+	    
+		prog_data = prog_data[rev(order(prog_data$F1)),]
+
+        if (nrow(prog_data) > 0) {
+           if (is.null(best_df)) {
+			  best_df = prog_data[1,,drop=F]
+           }
+           else {
+              best_df = rbind(best_df, prog_data[1,,drop=F])
+           }
+       }
+	}
+
+
+	max_TP = max(best_df$TP)
+	max_FP = max(best_df$FP)
+	plot(0,0, xlim=c(0,max_FP), ylim=c(0,max_TP), xlab="FP", ylab="TP", main="TP vs. FP for max F1", t='n')
+	for (i in 1:nrow(best_df)) {
+		prog_data = best_df[i,,drop=F]
+	    points(prog_data$FP[1], prog_data$TP[1], col=prog_colors[i], pch=i, lwd=lwd)
+	}	
+	
+
+	plot.new()
+    make_legend(prognames, prog_colors)
+        
+    best_df = best_df[rev(order(best_df$F1)),]
+    print(best_df)
+
+    barplot(best_df$F1, names.arg=best_df$prog, las=2, ylim=c(0,min(max(best_df$F1+0.05), 1)))
+
+	best_filename = paste(dat_filename, '.best.dat', sep='')
+	write.table(best_df, file=best_filename, quote=F, sep="\t", row.names=F)	
+	
+	quit(save = "no", status = 0, runLast = FALSE)
+
+}
+
+main()
+
+
+

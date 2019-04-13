@@ -1,0 +1,56 @@
+#!/usr/bin/env Rscript
+
+args<-commandArgs(TRUE)
+
+if (length(args) != 2) {
+    stop("usage: plot_before_vs_after_filt_TP_FP_compare.Rscript before.best.dat after.best.dat")
+}
+
+
+before_dat_filename = args[1]
+after_dat_filename = args[2]
+
+pdf_filename = paste0(after_dat_filename, '.before_vs_after.pdf')
+pdf(pdf_filename, width=10)
+
+
+before_dat = read.table(before_dat_filename, header=T, row.names=1)
+after_dat = read.table(after_dat_filename, header=T, row.names=1)
+
+prognames = rownames(before_dat)
+merged_df = data.frame(prog=prognames, 
+                       before_TP=before_dat[prognames,'TP'], before_FP=before_dat[prognames,'FP'],
+                       after_TP=after_dat[prognames,'TP'], after_FP=after_dat[prognames,'FP'])
+
+rownames(merged_df) = prognames
+
+max_TP = max(merged_df$before_TP, merged_df$after_TP)
+max_FP = max(merged_df$before_FP, merged_df$after_FP)
+
+plot(0,0, type='n', xlim=c(0,max_FP), ylim=c(0,max_TP), xlab='FP', ylab='TP')
+
+colors = rainbow(length(prognames))
+
+i=0
+for (progname in prognames) {
+	prog_data = merged_df[progname,,drop=F]
+
+	print(prog_data)
+
+	before_TP = prog_data$before_TP[1]
+    before_FP = prog_data$before_FP[1]
+
+    after_TP  = prog_data$after_TP[1]
+    after_FP  = prog_data$after_FP[1]
+
+	i = i + 1
+	arrows(before_FP, before_TP, after_FP, after_TP, col=colors[i], length=0.15, lwd=2)
+	print(c(before_FP, before_TP, after_FP, after_TP))  
+    text(before_FP, before_TP, labels=progname, col=colors[i], cex=0.6, pos=4)
+}
+
+merged_dat_filename = paste0(after_dat_filename, ".before_vs_after.dat")
+write.table(merged_df, file=merged_dat_filename, quote=F, sep="\t")
+
+dev.off()
+
