@@ -21,7 +21,7 @@ my %converter = (CHIMERASCAN => 'ChimeraScan',
                  SOAP_FUSE => 'SOAP-fuse',
                  'STAR_FUSION_GRCh37v19_FL3_v51b3df4' => 'STAR_FUSION_old',
                  TOPHAT_FUSION => 'TopHat-Fusion',
-                 ARRIBA => 'ARRIBA',
+                 ARRIBA => ['ARRIBA', 'ARRIBA_hc'],
                  PIZZLY => 'PIZZLY',
                  STARCHIP => 'STARCHIP',
                  'STAR_FUSION_v1.5_hg19_Apr042019' => 'STAR_FUSION_v1.5'
@@ -38,8 +38,15 @@ while (<STDIN>) {
         my $prog = $2;
         
         my $proper_progname = $converter{$prog} or die "Error, cannot find proper prog name for $prog as run on sample $sample_name";
-        
-        print join("\t", $sample_name, $proper_progname, $filename) . "\n";
+
+        if (ref $proper_progname) {
+            foreach my $progname_adj (@$proper_progname) {
+                print join("\t", $sample_name, $progname_adj, $filename) . "\n";
+            }
+        }
+        else {
+            print join("\t", $sample_name, $proper_progname, $filename) . "\n";
+        }
     }
     else {
         print STDERR "WARNING: couldn't decipher filename $filename as fusion result file\n";

@@ -19,22 +19,11 @@ my %prog_type_to_file_parser = (
     'EricScript' => 'EricScript_parser',
 
     'FusionCatcher' => 'FusionCatcher_parser',
-    'FUSION_CATCHER_V0997b' => 'FusionCatcher_parser',
-    'FUSION_CATCHER_V0997b_KP' => 'FusionCatcher_KP_parser',
-    'FUSION_CATCHER_V0997b_RF1' => 'FusionCatcher_parser',
-    'FUSION_CATCHER_V0997b_RF1KP' => 'FusionCatcher_KP_parser',
-    'FC_V0997c' => 'FusionCatcher_parser',
-    'FC_V0997b' => 'FusionCatcher_parser',
-    'FC_V0994e' => 'FusionCatcher_parser',
-        
-    
+
     'FusionHunter' => 'FusionHunter_parser',
 
     'FusionInspector' => 'FusionInspector_parser',
-    'starFusionGRCh37_FI' => 'FusionInspector_parser',
-    'starFusionGRCh38_FI' => 'FusionInspector_parser',
-    
-    
+        
     'InFusion' => 'InFusion_parser', 
 
     'JAFFA-Assembly' => 'JAFFA_parser',
@@ -57,11 +46,14 @@ my %prog_type_to_file_parser = (
 
     'ARRIBA' => 'ARRIBA_parser',
 
+    'ARRIBA_hc' => 'ARRIBA_hc_parser',
+    
     'STARCHIP' => 'STARCHIP_parser',
-
+    
     'TrinityFusion-D' => 'TrinityFusion_parser',
     'TrinityFusion-C' => 'TrinityFusion_parser',
     'TrinityFusion-UC' => 'TrinityFusion_parser'
+        
     
     );
 
