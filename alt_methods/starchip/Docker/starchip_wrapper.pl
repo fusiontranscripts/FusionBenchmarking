@@ -13,6 +13,7 @@ use Pipeliner;
 my $help_flag;
 
 my $output_token = "starchip";
+my $chim_seg_min = 15;
 
 my $usage = <<__EOUSAGE;
 
@@ -32,6 +33,8 @@ my $usage = <<__EOUSAGE;
 #
 #  --output_token <string>  token for output files (default: $output_token)
 #
+#  --chim_seg_min <int>    value for STAR --chimSegmentMin and --chimJunctionOverhangMin  (default: $chim_seg_min)
+#
 #######################################################################################################
 
 __EOUSAGE
@@ -49,7 +52,9 @@ my $output_dir;
               'left_fq=s' => \$left_fq,
               'right_fq=s' => \$right_fq,
               'starchip_parameters_file=s' => \$starchip_parameters_file,
+              'chim_seg_min=i' => \$chim_seg_min,
               'output_dir=s' => \$output_dir);
+
 
 if ($help_flag) {
     die $usage;
@@ -76,14 +81,14 @@ main: {
         &Pipeliner::process_cmd("mkdir -p $output_dir");
     }
     chdir($output_dir) or die "Error, cannot cd to $output_dir";
-
+    
     ## Run STAR:
     my $cmd = "STAR --genomeDir $star_index_dir "
             . " --readFilesIn $left_fq $right_fq "
             . " --outReadsUnmapped Fastx "
             . " --quantMode GeneCounts "
-            . " --chimSegmentMin 15 "
-            . " --chimJunctionOverhangMin 15 "
+            . " --chimSegmentMin $chim_seg_min "
+            . " --chimJunctionOverhangMin $chim_seg_min "
             . " --outSAMstrandField intronMotif "
             . " --readFilesCommand zcat "
             . " --outSAMtype BAM Unsorted ";
