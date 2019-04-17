@@ -1,0 +1,7 @@
+{
+  "trinity_fusion_wf.genome_lib_tar": "inputs/ctat_testkit_genome_lib_dir.star1.5.tar",
+  "trinity_fusion_wf.left_fq": "inputs/rnaseq_1.fastq.gz",
+  "trinity_fusion_wf.right_fq": "inputs/rnaseq_2.fastq.gz",
+  "trinity_fusion_wf.TrinityFusion_D": "true",
+  "trinity_fusion_wf.sample_name": "mysample"
+}
