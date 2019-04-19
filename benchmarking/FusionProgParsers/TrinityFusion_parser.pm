@@ -51,6 +51,9 @@ sub parse_fusion_result_file {
         
         if ($fusion_gene_A eq $fusion_gene_B) { next; } # no self-fusions
 
+        my $splice_type = $x[9];
+        unless ($splice_type eq "ONLY_REF_SPLICE") { next; } # otherwise, too many assembly artifacts
+        
         my $chr_coords_A = $x[6];
         my $chr_coords_B = $x[8];
         

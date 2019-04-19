@@ -19,7 +19,8 @@ my %prog_type_to_file_parser = (
     'EricScript' => 'EricScript_parser',
 
     'FusionCatcher' => 'FusionCatcher_parser',
-
+    'FC_V0997c' => 'FusionCatcher_parser',
+    
     'FusionHunter' => 'FusionHunter_parser',
 
     'FusionInspector' => 'FusionInspector_parser',
@@ -49,6 +50,7 @@ my %prog_type_to_file_parser = (
     'ARRIBA_hc' => 'ARRIBA_hc_parser',
     
     'STARCHIP' => 'STARCHIP_parser',
+    'STARChip_csm10' => 'STARCHIP_parser',
     
     'TrinityFusion-D' => 'TrinityFusion_parser',
     'TrinityFusion-C' => 'TrinityFusion_parser',

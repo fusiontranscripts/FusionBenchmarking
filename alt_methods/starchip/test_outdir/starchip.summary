@@ -1,9 +1,9 @@
 Partner1	Partner2	SpanningReads	SplitReads	AvgAS	NearGene1	Distance1	NearGene2	Distance2	ConsensusSeq
-chr17:57970686:+	chr17:47021337:-	17	9	26.4	RPS6KB1	0	SNF8	0	tgcggatccacg*c**gggctctgaggatgagctggaggagggggccaagtataaggagcgagggacggtcttgg
-chr17:48943419:-	chr17:35880751:-	26	8	24.2	TOB1	0	SYNRG	0	ggccgtaacatacaggaggaaaaatccagcgagttttcatctgggggctgcttcggggcggcttggaccacagacccgc
-chr20:56886178:+	chr19:17256207:+	8	5	29.4	RAB22A	0	MYO9B	0	aca**t*tg*t*caaacatcaacccaacaatagggcttttggaaatgcca*****gcccaca
-chr17:37374426:+	chr17:35479453:+	40	4	29.8	STAC2	0	ACACA	0	gggagcgcttg**t*gc**g**c***g****ag**t***gg***g**gg****g**gggg
-chr17:46384693:-	chr17:38243106:-	18	5	24.2	AC090627.1	0	THRA	0	gg*ct**g***aaaaactgcccatgttctccgagtgtggagaaaagagag*g*****g*ga
-chr4:76846964:+	chr1:247094880:+	22	2	26.0	NAAA	0	AHCTF1	0	atagcattctcccaccaccagcctttatctgaacggggcgggtgagcgcgccgccgcggg
-chr17:38243106:+	chr17:46371709:+	72	25	28.4	THRA	0	AC090627.1	0	actg***tt**c*aaaaaactgcccatgttctccgagcaatttcgagtgcaagtgccacagtgtcag**a*a*aa*c*
-chr17:48548389:-	chr17:37595418:+	5	4	26.0	ACSF2	0	MED1	0	gtgagctgtccggagcttgtacagcag*taaggttgcttatggaaccacagagaacagt
+chr17:48943419:-	chr17:35880751:-	26	8	0	TOB1	0	SYNRG	0	.
+chr17:38243106:+	chr17:46371709:+	72	25	0	THRA	0	AC090627.1	0	.
+chr20:56886178:+	chr19:17256207:+	8	5	0	RAB22A	0	MYO9B	0	.
+chr4:76846964:+	chr1:247094880:+	22	2	0	NAAA	0	AHCTF1	0	.
+chr17:57970686:+	chr17:47021337:-	17	9	0	RPS6KB1	0	SNF8	0	.
+chr17:48548389:-	chr17:37595418:+	5	4	0	ACSF2	0	MED1	0	.
+chr17:37374426:+	chr17:35479453:+	40	4	0	STAC2	0	ACACA	0	.
+chr17:46384693:-	chr17:38243106:-	18	5	0	AC090627.1	0	THRA	0	.

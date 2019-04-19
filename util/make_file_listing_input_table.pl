@@ -5,6 +5,7 @@ use warnings;
 use Carp;
 
 
+## convert prog name tokens to names used in the data table.
 my %converter = (CHIMERASCAN => 'ChimeraScan',
                  CHIMPIPE => 'ChimPipe',
                  DEFUSE => 'deFuse',
@@ -24,7 +25,11 @@ my %converter = (CHIMERASCAN => 'ChimeraScan',
                  ARRIBA => ['ARRIBA', 'ARRIBA_hc'],
                  PIZZLY => 'PIZZLY',
                  STARCHIP => 'STARCHIP',
-                 'STAR_FUSION_v1.5_hg19_Apr042019' => 'STAR_FUSION_v1.5'
+                 'STAR_FUSION_v1.5_hg19_Apr042019' => 'STAR_FUSION_v1.5',
+                 STARCHIP_csm10 => 'STARChip_csm10',
+                 TRINITY_FUSION_C_hg19 => 'TrinityFusion-C',
+                 TRINITY_FUSION_UC_hg19 => 'TrinityFusion-UC',
+                 TRINITY_FUSION_D_hg19 => 'TrinityFusion-D'
     );
 
 
