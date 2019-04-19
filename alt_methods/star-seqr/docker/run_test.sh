@@ -1,0 +1,2 @@
+singularity run -e -B /home/bhaas star-seqr.v0.6.7.simg  starseqr.py -1 ~/garb/reads_1.fq.gz -2 ~/garb/reads_2.fq.gz -i /home/bhaas/CTAT_GENOMICS/genome_libs_StarF1.5/GRCh37_v19_CTAT_lib_Feb092018/ctat_genome_lib_build_dir/ref_genome.fa.star.idx -g /home/bhaas/CTAT_GENOMICS/genome_libs_StarF1.5/GRCh37_v19_CTAT_lib_Feb092018/ctat_genome_lib_build_dir/ref_annot.gtf -r /home/bhaas/CTAT_GENOMICS/genome_libs_StarF1.5/GRCh37_v19_CTAT_lib_Feb092018/ctat_genome_lib_build_dir/ref_genome.fa -m 1 -vv -p `pwd`/seqrout
+

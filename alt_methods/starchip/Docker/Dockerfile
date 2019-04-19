@@ -148,3 +148,14 @@ RUN apt-get clean
 
 COPY starchip_wrapper.pl Pipeliner.pm /usr/local/bin/
 
+
+
+####################
+## for troubleshooting purposes
+
+RUN apt-get install -y git
+
+WORKDIR $SRC
+
+RUN git clone https://github.com/brianjohnhaas/starchip.git starchip.bjhfork
+

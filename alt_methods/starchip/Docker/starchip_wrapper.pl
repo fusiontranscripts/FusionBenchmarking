@@ -81,6 +81,8 @@ main: {
         &Pipeliner::process_cmd("mkdir -p $output_dir");
     }
     chdir($output_dir) or die "Error, cannot cd to $output_dir";
+
+    &Pipeliner::process_cmd("ln -sf $starchip_reference_dirname");
     
     ## Run STAR:
     my $cmd = "STAR --genomeDir $star_index_dir "
