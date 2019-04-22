@@ -30,7 +30,8 @@ my %converter = (CHIMERASCAN => 'ChimeraScan',
                  TRINITY_FUSION_C_hg19 => 'TrinityFusion-C',
                  TRINITY_FUSION_UC_hg19 => 'TrinityFusion-UC',
                  TRINITY_FUSION_D_hg19 => 'TrinityFusion-D',
-                 STARSEQR => 'STARSEQR'
+                 STARSEQR => 'STARSEQR',
+                 'STARSEQR_STAR-SEQR' => 'STARSEQR' 
     );
 
 
@@ -38,6 +39,11 @@ while (<STDIN>) {
     chomp;
     my $filename = $_;
 
+    unless (-f $filename) {
+        print STDERR "warning, $filename is not a file. Skipping...\n";
+        next;
+    }
+    
     if ($filename =~ m|/samples/([^/]+)/([^/]+)/|) {
         
         my $sample_name = $1;
