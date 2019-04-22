@@ -84,8 +84,9 @@ main: {
     ##################################
     ######  Scoring of fusions #######
 
-    #my @min_agree_truth = (2, 3, 4, 5);
-    my @min_agree_truth = (4);
+    #my @min_agree_truth = (3, 4, 5, 6);
+    my @min_agree_truth = (2, 3, 4, 5);
+    #my @min_agree_truth = (4);
     
     foreach my $min_agree (@min_agree_truth) {
         &score_and_plot("preds.collected.gencode_mapped.wAnnot.filt", "preds.collected.gencode_mapped.wAnnot.filt.byProgAgree", $min_agree);
