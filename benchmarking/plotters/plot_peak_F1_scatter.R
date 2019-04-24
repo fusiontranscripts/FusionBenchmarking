@@ -16,7 +16,7 @@ data = read.table(roc_file, header=T)
 
 p = data %>% group_by(prog) %>% filter(F1 == max(F1)) %>% ggplot(aes(x=PPV, y=TPR, color=prog)) + geom_point()
 
-pdf_filename = paste0(roc_file, "tpr_ppv_at_maxF1_scatter.pdf")
+pdf_filename = paste0(roc_file, ".tpr_ppv_at_maxF1_scatter.pdf")
 pdf(pdf_filename)
 
 plot(p)
