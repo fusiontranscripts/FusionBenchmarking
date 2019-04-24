@@ -213,6 +213,15 @@ sub evaluate_predictions {
     $cmd = "$benchmark_toolkit_basedir/plotters/plot_ROC.Rscript $output_filename.scored.ROC";
     $pipeliner->add_commands(new Command($cmd, "$checkpoint_token.plot_roc.ok"));
 
+
+    # plot F1
+    $cmd = "$benchmark_toolkit_basedir/plotters/plot_F1_vs_min_frags.R $output_filename.scored.ROC";
+    $pipeliner->add_commands(new Command($cmd, "$checkpoint_token.plot_F1_vs_min_frags.ok"));
+
+    $cmd = "$benchmark_toolkit_basedir/plotters/plot_peak_F1_scatter.R $output_filename.scored.ROC";
+    $pipeliner->add_commands(new Command($cmd, "$checkpoint_token.plot_peak_F1_scatter.ok"));
+    
+    
     ###################################
     # convert to Precision-Recall curve
     

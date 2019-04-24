@@ -116,6 +116,9 @@ main: {
 
     $pipeliner->run();
     
+
+    
+
     
     exit(0);
     
@@ -282,6 +285,14 @@ sub ROC_and_PR {
     $cmd = "$benchmark_toolkit_basedir/plotters/plot_ROC.Rscript $preds_scored.ROC";
     $pipeliner->add_commands(new Command($cmd, "plot_roc.ok"));
 
+    
+    # plot F1
+    $cmd = "$benchmark_toolkit_basedir/plotters/plot_F1_vs_min_frags.R $preds_scored.ROC";
+    $pipeliner->add_commands(new Command($cmd, "plot_F1_vs_min_frags.ok"));
+
+    $cmd = "$benchmark_toolkit_basedir/plotters/plot_peak_F1_scatter.R $preds_scored.ROC";
+    $pipeliner->add_commands(new Command($cmd, "plot_peak_F1_scatter.ok"));
+    
     ###################################
     # convert to Precision-Recall curve
 
