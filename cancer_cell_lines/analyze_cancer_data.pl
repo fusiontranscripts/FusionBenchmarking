@@ -85,7 +85,7 @@ main: {
     ######  Scoring of fusions #######
 
     #my @min_agree_truth = (3, 4, 5, 6);
-    my @min_agree_truth = (2, 3, 4, 5);
+    my @min_agree_truth = (2..10);
     #my @min_agree_truth = (4);
     
     foreach my $min_agree (@min_agree_truth) {
@@ -102,7 +102,7 @@ main: {
     $cmd = "$benchmark_data_basedir/util/capture_PR_AUC_for_plotting.pl auc_files.list > all.auc.dat";
     $pipeliner->add_commands(new Command($cmd, "all_auc_dat.ok"));
 
-    $cmd = "$benchmark_data_basedir/util/plot_all_auc_barplots.Rscript";
+    $cmd = "$benchmark_data_basedir/benchmarking/plotters/plot_all_auc_barplots.Rscript";
     $pipeliner->add_commands(new Command($cmd, "plot_all_auc_barplots.ok"));
 
     $pipeliner->run();

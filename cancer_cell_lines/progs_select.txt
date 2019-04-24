@@ -1,5 +1,7 @@
+ARRIBA
 ChimPipe
 ChimeraScan
+deFuse
 EricScript
 FusionCatcher
 FusionHunter
@@ -7,12 +9,12 @@ InFusion
 JAFFA-Assembly
 JAFFA-Direct
 MapSplice
-PRADA
-SOAP-fuse
-TopHat-Fusion
-deFuse
 nFuse
 PIZZLY
+PRADA
+SOAP-fuse
 STARCHIP
-ARRIBA
+STARSEQR
 STAR_FUSION_v1.5
+TopHat-Fusion
+TrinityFusion-C

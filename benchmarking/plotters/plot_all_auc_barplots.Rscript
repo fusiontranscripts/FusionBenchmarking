@@ -1,12 +1,15 @@
 #!/usr/bin/env Rscript
 
+library(tidyverse)
 library('data.table')
 
-pdf("all.auc.dat.pdf")
+
+pdf("all.auc.dat.pdf", height=20)
 
 data = read.table("all.auc.dat", header=T)
 
-layout(matrix(1:16, 4, 4, byrow=T)) 
+
+layout(matrix(1:36, nrow=9, ncol=4, byrow=T)) 
 
 par(mar=c(2,2,2,2))
 
@@ -17,19 +20,52 @@ prognames = levels(dt[,progname])
 colors = rainbow(length(prognames))
 names(colors) = prognames
 
-for (mt in c(2,3,4,5)) {
+rankings = list()
+
+for (mt in seq(2, 10)) {
  	for (iu in c(0,1)) {
     	for (okp in c(0,1)) {
 
+            title = sprintf("mA=%d, iu=%d, okp=%d", mt, iu, okp)
+            
 			mini_dt = dt[min_thresh==mt & ignoreUnsure==iu & okpara==okp,]
             mini_dt = mini_dt[order(-auc),]
             print(mini_dt)
             ordered_prognames = mini_dt[,progname]
-            barplot(mini_dt[,auc], names.arg=ordered_prognames, las=2, cex.axis=0.5, cex.names=0.5, col=colors[ordered_prognames])
+            barplot(mini_dt[,auc], names.arg=ordered_prognames, las=2, cex.axis=0.5, cex.names=0.5, col=colors[ordered_prognames], main=title)
+
+            ordered_prognames = as.character(ordered_prognames)
+            for (rank_val in seq(length(ordered_prognames))) {
+                myprogname = ordered_prognames[rank_val]
+                if (myprogname %in% names(rankings)) {
+                    rankings[[ myprogname ]] = c(rankings[[ myprogname ]], rank_val)
+                } else {
+                    rankings[[ myprogname ]] = c(rank_val)
+                }
+            }
             
         }
     }
 }
 
 dev.off()
+
+
+#############################
+## Examine relative rankings:
+
+rankings.table = do.call(rbind, lapply(names(rankings), function(x) { data.frame(prog=x, rankval=rankings[[x]]) }))
+
+write.table(rankings.table, file="all.auc.rankings.dat", quote=F, sep="\t")
+
+ranked.progs = rankings.table %>% group_by(prog) %>% summarize(mr=median(rankval)) %>% arrange(mr)
+
+rankings.table$prog = factor(rankings.table$prog, levels=factor(ranked.progs$prog))
+p = rankings.table %>% ggplot(aes(as.factor(prog), rankval)) + geom_boxplot() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+
+pdf("all.auc.rankings.boxplot.pdf")
+plot(p)
+dev.off()
+
+
 
