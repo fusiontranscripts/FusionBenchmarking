@@ -232,13 +232,6 @@ sub classify_fusion_prediction {
             $accuracy_explanation = "already scored $prog_fusion as FP";
         }
         
-        ###########
-        ## Check to see if we should ignore it
-        elsif (%unsure_fusions && $unsure_fusions{$fusion_name}) {
-            $accuracy_token = "NA-UNCLASS";
-            $accuracy_explanation = "not classifying $fusion_name, in unsure list";
-        }
-                
         ###############################
         ## Check for new TP recognition
         
@@ -248,8 +241,14 @@ sub classify_fusion_prediction {
             $accuracy_explanation = "first encounter of TP $prog_fusion";
             $fusion_selected = $fusion_name;
         }
-        
 
+        ###########
+        ## Check to see if we should ignore it
+        elsif (%unsure_fusions && $unsure_fusions{$fusion_name}) {
+            $accuracy_token = "NA-UNCLASS";
+            $accuracy_explanation = "not classifying $fusion_name, in unsure list";
+        }
+        
         if ($accuracy_token) { 
             if ($using_para_proxy) {
                 $accuracy_explanation .= " (para of $using_para_proxy)";
@@ -287,6 +286,7 @@ sub parse_fusion_listing {
     
     open (my $fh, $fusions_file) or die "Error, cannot open file $fusions_file";
     while (<$fh>) {
+        unless (/\w/) { next; }
         chomp;
         my $fusion = $_;
         if ($fusion =~ /^(\S+)\|(\S+)--(\S+)$/) {
