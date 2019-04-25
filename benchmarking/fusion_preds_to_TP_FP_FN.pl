@@ -222,6 +222,10 @@ sub classify_fusion_prediction {
         if ($seen_progTP{$prog_fusion}) {
             $accuracy_token = "NA-TP";
             $accuracy_explanation = "already scored $prog_fusion as TP";
+            if ($using_para_proxy) {
+                $accuracy_explanation .= " (para of $using_para_proxy)";
+            }
+            last; 
         }
 
         ############################
@@ -230,6 +234,10 @@ sub classify_fusion_prediction {
         elsif ($FP_progFusions{$prog_fusion}) {
             $accuracy_token = "NA-FP";
             $accuracy_explanation = "already scored $prog_fusion as FP";
+            if ($using_para_proxy) {
+                $accuracy_explanation .= " (para of $using_para_proxy)";
+            }     
+            last;
         }
         
         ###############################
@@ -240,6 +248,10 @@ sub classify_fusion_prediction {
             $seen_progTP{$prog_fusion} = 1;
             $accuracy_explanation = "first encounter of TP $prog_fusion";
             $fusion_selected = $fusion_name;
+            if ($using_para_proxy) {
+                $accuracy_explanation .= " (para of $using_para_proxy)";
+            }
+            last;
         }
 
         ###########
@@ -247,14 +259,11 @@ sub classify_fusion_prediction {
         elsif (%unsure_fusions && $unsure_fusions{$fusion_name}) {
             $accuracy_token = "NA-UNCLASS";
             $accuracy_explanation = "not classifying $fusion_name, in unsure list";
-        }
-        
-        if ($accuracy_token) { 
             if ($using_para_proxy) {
                 $accuracy_explanation .= " (para of $using_para_proxy)";
             }
-            last; 
-        } 
+            ## Not short-circuiting here... might have a better classification for an alternative candidate arrangment.
+        }
     }
     
     if ($accuracy_token) {
