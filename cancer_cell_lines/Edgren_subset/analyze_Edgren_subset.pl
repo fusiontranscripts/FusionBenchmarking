@@ -58,6 +58,11 @@ main: {
     $cmd = "$benchmark_toolkit_basedir/plotters/plot_peak_F1_scatter.R $roc_file";
     $pipeliner->add_commands(new Command($cmd, "edgren.plot_peak_F1_scatter.ok"));
 
+    # plot TP vs FP counts according to min frags per orog
+    $cmd = "$benchmark_toolkit_basedir/plotters/plot_TP_FP_vs_minSum_per_prog.R $roc_file";
+    $pipeliner->add_commands(new Command($cmd, "edgren.plot_TP_FP_vs_minFrags.ok"));
+    
+    
     ###################################
     # convert to Precision-Recall curve
 

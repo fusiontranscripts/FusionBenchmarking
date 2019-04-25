@@ -14,7 +14,9 @@ library(tidyverse)
 
 data = read.table(roc_file, header=T)
 
-data %>% filter(min_sum_frags<20) %>% gather(key='TPFP', value='count', TP, FP) %>% ggplot(aes(x=min_sum_frags, y=count, color=TPFP)) + geom_point() + facet_wrap(~prog) + geom_hline(yintercept = max_TP) + ylim(0,1.5*max_TP)
+max_TP = max(data$TP)
+
+p = data %>% filter(min_sum_frags<20) %>% gather(key='TPFP', value='count', TP, FP) %>% ggplot(aes(x=min_sum_frags, y=count, color=TPFP)) + geom_point() + facet_wrap(~prog) + geom_hline(yintercept = max_TP) + ylim(0,1.5*max_TP)
 
 pdf_filename = paste0(roc_file, ".TP_and_FP_counts_vs_minFrags_eaProg.pdf")
 pdf(pdf_filename)
