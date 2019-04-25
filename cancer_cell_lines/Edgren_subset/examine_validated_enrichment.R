@@ -64,10 +64,26 @@ summary_df = do.call(rbind, df_list)
 summary_df$rowsum = rowSums(summary_df[,-1])
 
 
+
+##
+## Contigency table:
+#'
+#'                          Predicted
+#'                     Yes(+)      No(-)
+#' 
+#'             Yes(+)  Vp_Pp   |   Vp_Pm
+#'   Validated         -----------------
+#'             No(-)   Vm_Pp   |   Vm_Pm
+#'
+#' Note, p=plus, m=minus
+#' 
+
+
+
 stat.test = do.call(rbind, apply(summary_df, 1, function(x) {
-    print(x)
-    test = fisher.test(rbind(c(x[['Vp_Pp']]+1, x[['Vp_Pm']]+1), c(x[['Vm_Pp']]+1, x[['Vm_Pm']]+1)), alternative='greater')
-    ##test = fisher.test(rbind(c(x[['Vp_Pp']], x[['Vp_Pm']]), c(x[['Vm_Pp']], x[['Vm_Pm']])), alternative='greater')
+    #print(x)
+    ##test = fisher.test(rbind(c(x[['Vp_Pp']]+1, x[['Vp_Pm']]+1), c(x[['Vm_Pp']]+1, x[['Vm_Pm']]+1)), alternative='greater')
+    test = fisher.test(rbind(c(x[['Vp_Pp']], x[['Vp_Pm']]), c(x[['Vm_Pp']], x[['Vm_Pm']])), alternative='greater')
     data.frame(pvalue=test$p.value, oddsratio=test$estimate)
 }) )
 
@@ -86,6 +102,20 @@ summary_df$Pxvp_oddsratio = summary_df$PpVp_odds / summary_df$PmVp_odds
 
 print(summary_df)
 
+write.table(summary_df, file=paste0(preds_by_prog_agree_file, ".enrich_stats.tsv"), quote=F, sep="\t")
 
-    
+
+
+## make plots
+pdf_filename = paste0(preds_by_prog_agree_file, ".enrich_stats.pdf")
+
+pdf(pdf_filename)
+
+par(mfrow=c(2,1))
+
+plot(summary_df$min_progs_required, summary_df$Vp_Pp, col='blue', main='Retaining Validated Fusions')
+points(summary_df$min_progs_required, summary_df$enrich_score, col='orange', pch=2)
+legend('topright', c('# validated fusions', 'enrichment score'), col=c('blue', 'orange'), pch=c(1,2))
+
+plot(summary_df$min_progs_required, summary_df$valid_enrichment, main='enrichment ratio')
 
