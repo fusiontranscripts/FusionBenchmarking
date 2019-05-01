@@ -52,6 +52,7 @@ my %prog_type_to_file_parser = (
     'STARCHIP' => 'STARCHIP_parser',
     'STARChip_csm10' => 'STARCHIP_parser',
     'STARCHIP_csm10' => 'STARCHIP_parser',
+    'STARCHIP_csm10_pG_Apr302019' => 'STARCHIP_parser',
     
     'TrinityFusion-D' => 'TrinityFusion_parser',
     'TrinityFusion-C' => 'TrinityFusion_parser',
