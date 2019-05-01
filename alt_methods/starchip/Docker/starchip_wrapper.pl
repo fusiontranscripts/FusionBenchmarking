@@ -96,7 +96,7 @@ main: {
             . " --outSAMtype BAM Unsorted ";
 
     my $chkpt_dir = "__starchip_chkpts";
-    my $pipeliner = new Pipeliner( '-checkpoint_dir' => $chkpt_dir );
+    my $pipeliner = new Pipeliner( '-checkpoint_dir' => $chkpt_dir, '-verbose' => 2 );
     
     $pipeliner->add_commands( new Command($cmd, "star_align.ok") );
 

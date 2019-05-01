@@ -293,6 +293,11 @@ sub ROC_and_PR {
     $cmd = "$benchmark_toolkit_basedir/plotters/plot_peak_F1_scatter.R $preds_scored.ROC";
     $pipeliner->add_commands(new Command($cmd, "plot_peak_F1_scatter.ok"));
     
+    # plot TP vs FP counts according to min frags per prog
+    $cmd = "$benchmark_toolkit_basedir/plotters/plot_TP_FP_vs_minSum_per_prog.R $preds_scored.ROC";
+    $pipeliner->add_commands(new Command($cmd, "sim_plot_TP_FP_vs_minFrags.ok"));
+    
+    
     ###################################
     # convert to Precision-Recall curve
 

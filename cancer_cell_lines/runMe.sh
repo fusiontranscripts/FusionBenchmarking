@@ -16,7 +16,5 @@ fi
 
 ## Edgren subset study
 
-cat preds.collected.gencode_mapped.wAnnot.filt | egrep '^(sample|BT474|MCF7|KPL4|SKBR3)' > Edgren_subset/preds.collected.gencode_mapped.wAnnot.filt.edgren
-
 cd Edgren_subset && ./runMe.sh
 
