@@ -32,11 +32,12 @@ if (basename(cwd()) !~ /^sim_(50|101)/) {
 }
 
 
-my $usage = "\n\n\tusage: $0  sim.truth.dat sim.fusion_TPM_values.dat\n\n";
+my $usage = "\n\n\tusage: $0  sim.truth.dat sim.fusion_TPM_values.dat [restrict_progs.file]\n\n";
 
 
 my $sim_truth_set = $ARGV[0] or die $usage;
 my $sim_fusion_TPM_values = $ARGV[1];
+my $restrict_progs_file = $ARGV[2] || "";
 
 $sim_truth_set = &ensure_full_path($sim_truth_set);
 $sim_fusion_TPM_values = &ensure_full_path($sim_fusion_TPM_values) if ($sim_fusion_TPM_values);
@@ -53,7 +54,7 @@ main: {
     my $pipeliner = &init_pipeliner();
     
     ## create file listing
-    my $cmd = "find ./samples -type f | $benchmark_data_basedir/util/make_file_listing_input_table.pl > fusion_result_file_listing.dat";
+    my $cmd = "find ./samples -type f | $benchmark_data_basedir/util/make_file_listing_input_table.pl $restrict_progs_file > fusion_result_file_listing.dat";
     $pipeliner->add_commands(new Command($cmd, "fusion_file_listing.ok"));
 
     # collect predictions

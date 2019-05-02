@@ -46,7 +46,6 @@ my %prog_type_to_file_parser = (
     'PIZZLY' => 'PIZZLY_parser',
 
     'ARRIBA' => 'ARRIBA_parser',
-
     'ARRIBA_hc' => 'ARRIBA_hc_parser',
     
     'STARCHIP' => 'STARCHIP_parser',
@@ -54,6 +53,7 @@ my %prog_type_to_file_parser = (
     'STARCHIP_csm10' => 'STARCHIP_parser',
     'STARCHIP_csm10_pG_Apr302019' => 'STARCHIP_parser',
     
+    'TrinityFusion' => 'TrinityFusion_parser',
     'TrinityFusion-D' => 'TrinityFusion_parser',
     'TrinityFusion-C' => 'TrinityFusion_parser',
     'TrinityFusion-UC' => 'TrinityFusion_parser',
@@ -90,15 +90,18 @@ main: {
         if (exists $prog_type_to_file_parser{$prog_name}) {
             $parser_module = $prog_type_to_file_parser{$prog_name};
         }
-        elsif ($prog_name =~ /STAR_FUSION/) {
-            if ($prog_name =~ /FI/) {
-                $parser_module = "FusionInspector_parser";
-            }
-            else {
-                $parser_module = $prog_type_to_file_parser{"STAR_FUSION"};
+        else {
+            ## use regex to find parser
+            foreach my $name (keys %prog_type_to_file_parser) {
+                if ($prog_name =~ /$name/i) {
+                    $parser_module = $prog_type_to_file_parser{$name};
+                    last;
+                }
             }
         }
-        else {
+
+
+        unless (defined $parser_module) {
             die "Error, no parser for prog [$prog_name] ";
         }
         
