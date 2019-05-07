@@ -11,6 +11,8 @@ use Pipeliner;
 use Process_cmd;
 
 
+my $restricted_progs_file = $ARGV[0] || "";
+
 unless ($ENV{FUSION_ANNOTATOR}) {
 
     if (-d "$ENV{HOME}/GITHUB/CTAT_FUSIONS/FusionAnnotator") {
@@ -44,7 +46,7 @@ main: {
     my $pipeliner = &init_pipeliner();
     
     ## create file listing
-    my $cmd = "find ./samples -type f | $benchmark_data_basedir/util/make_file_listing_input_table.pl > fusion_result_file_listing.dat";
+    my $cmd = "find ./samples -type f | $benchmark_data_basedir/util/make_file_listing_input_table.pl $restricted_progs_file > fusion_result_file_listing.dat";
     $pipeliner->add_commands(new Command($cmd, "fusion_file_listing.ok"));
 
     # collect predictions
