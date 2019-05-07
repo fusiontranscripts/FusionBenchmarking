@@ -25,11 +25,15 @@ library('data.table')
 
 dt = data.table(all_dat)
 
-dt_len101 = dt[read_type == "len101"]
+#dt_len101 = dt[read_type == "len101"]
 
-dt_auc_median = dt_len101[,.(auc.median=median(auc)), by=.(progname)][order(-auc.median)]
+#dt_auc_median = dt_len101[,.(auc.median=median(auc)), by=.(progname)][order(-auc.median)]
 
-all_dat$progname = factor(all_dat$progname, levels=factor(dt_auc_median$progname))
+#dt_auc_median = dt[,.(auc.median=median(auc)), by=.(progname)][order(-auc.median)]
+
+dt_auc_mean = dt[,.(auc.mean=mean(auc)), by=.(progname)][order(-auc.mean)]
+
+all_dat$progname = factor(all_dat$progname, levels=factor(dt_auc_mean$progname))
 all_dat$read_type = factor(all_dat$read_type, levels=factor(c('len101', 'len50')))
 
 
