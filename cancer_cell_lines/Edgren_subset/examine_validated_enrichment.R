@@ -43,20 +43,20 @@ for (min_progs_required in seq(1,15)) {
 
     predicted_minus = setdiff(all_preds_use, fusions_with_min_progs)
 
-    
+
     ## determine disjoint combo categories.
     validated_plus_predicted_plus = intersect(valid_fusions, fusions_with_min_progs)
     validated_plus_predicted_minus = intersect(valid_fusions, predicted_minus)
 
     validated_minus_predicted_plus = intersect(validated_minus, fusions_with_min_progs)
     validated_minus_predicted_minus = intersect(validated_minus, predicted_minus)
-    
+
     df = data.frame(min_progs_required=min_progs_required,
                     Vp_Pp = length(validated_plus_predicted_plus),
                     Vp_Pm = length(validated_plus_predicted_minus),
                     Vm_Pp = length(validated_minus_predicted_plus),
                     Vm_Pm = length(validated_minus_predicted_minus) )
-    
+
     df_list[[ length(df_list) + 1 ]] = df
 }
 
@@ -70,13 +70,13 @@ summary_df$rowsum = rowSums(summary_df[,-1])
 #'
 #'                          Predicted
 #'                     Yes(+)      No(-)
-#' 
+#'
 #'             Yes(+)  Vp_Pp   |   Vp_Pm
 #'   Validated         -----------------
 #'             No(-)   Vm_Pp   |   Vm_Pm
 #'
 #' Note, p=plus, m=minus
-#' 
+#'
 
 
 
@@ -118,4 +118,8 @@ points(summary_df$min_progs_required, summary_df$enrich_score, col='orange', pch
 legend('topright', c('# validated fusions', 'enrichment score'), col=c('blue', 'orange'), pch=c(1,2))
 
 plot(summary_df$min_progs_required, summary_df$valid_enrichment, main='enrichment ratio')
+
+p = summary_df %>% ggplot() + geom_bar(mapping=aes(x=min_progs_required, y=Vp_Pp), stat="identity", fill='grey75') + geom_line(mapping=aes(x=min_progs_required, y=valid_enrichment*37), size=2, color='blue') + scale_y_continuous(name = '# validated fusions', sec.axis = sec_axis(~./37, name='% total pred. fusions', labels = function(b) { paste0(round(b * 100, 0), "%")}) ) + theme(axis.title.y.right = element_text(color = "blue"))
+
+plot(p)
 
