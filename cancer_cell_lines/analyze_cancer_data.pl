@@ -78,9 +78,14 @@ main: {
     $pipeliner->add_commands(new Command($cmd, "pred_cor_matrix_plot.ok"));
     
 
+
+    ## remove edgren set:
+    $cmd = "bash -c 'set -eou pipefail; cat preds.collected.gencode_mapped.wAnnot.filt | egrep -v \"^(BT474|KPL4|MCF7|SKBR3)\" > preds.collected.gencode_mapped.wAnnot.filt.noEdgren'";
+    $pipeliner->add_commands(new Command($cmd, "rmEdgren.ok"));
+    
     ## run Venn-based accuracy analysis:
 
-    $cmd = "$benchmark_toolkit_basedir/Venn_analysis_strategy.pl preds.collected.gencode_mapped.wAnnot.filt progs_select.txt";
+    $cmd = "$benchmark_toolkit_basedir/Venn_analysis_strategy.pl preds.collected.gencode_mapped.wAnnot.filt.noEdgren progs_select.txt";
     $pipeliner->add_commands(new Command($cmd, "venn_analysis.ok"));
     
     
