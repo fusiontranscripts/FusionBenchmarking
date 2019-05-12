@@ -9,6 +9,12 @@ my $input_file = $ARGV[0] or die $usage;
 my $min_agree = $ARGV[1] or die $usage;
 
 main: {
+
+    my @progs_to_count = `cat ../progs_select.txt`;
+    chomp @progs_to_count;
+    
+    my %progs_to_count = map { + $_ => 1 } @progs_to_count;
+    
     
     open(my $fh, $input_file) or die $!;
 
@@ -76,8 +82,8 @@ main: {
 
         my $orig_fusion_name = $orig_fusion_cand_names[0];
                 
-        my $prog_count = scalar(keys %{$fusion_to_prog{$fusion_name}});
-
+        my $prog_count = scalar(grep { $progs_to_count{$_} } keys %{$fusion_to_prog{$fusion_name}});
+        
         #print "$fusion_name\t$orig_fusion_name\t$prog_count\n";
 
         if ($prog_count >= $min_agree) {
