@@ -16,13 +16,16 @@ main: {
     my %orig_fusion_call;
     my %prognames;
 
-    
+    my $header = <$fh>;
     while(<$fh>) {
         chomp;
         my @x = split(/\t/);
         my $sample_name = $x[0];
         my $progname = $x[1];
         my $fusion_name = $x[2];
+
+        my ($left_fusion_name, $right_fusion_name) = split(/--/, $fusion_name);
+        
         $fusion_name = "$sample_name|$fusion_name";
         
         $prognames{$progname}++;
@@ -33,6 +36,19 @@ main: {
         my @left_entries = split(/,/, $alt_fusion_names_left);
         my @right_entries = split(/,/, $alt_fusion_names_right);
 
+        @left_entries = grep { defined($_) } @left_entries;
+        @right_entries = grep { defined($_) } @right_entries;
+        
+        
+        
+        unless (grep {/^$left_fusion_name$/} @left_entries) {
+            push (@left_entries, $left_fusion_name);
+        }
+        unless (grep {/^$right_fusion_name$/} @right_entries) {
+            push (@right_entries, $right_fusion_name);
+        }
+        
+        
         foreach my $left_entry (@left_entries) {
             foreach my $right_entry (@right_entries) {
                 
@@ -61,10 +77,15 @@ main: {
         my $orig_fusion_name = $orig_fusion_cand_names[0];
                 
         my $prog_count = scalar(keys %{$fusion_to_prog{$fusion_name}});
+
+        #print "$fusion_name\t$orig_fusion_name\t$prog_count\n";
+
         if ($prog_count >= $min_agree) {
             $fusions_meet_min_prog_count{$orig_fusion_name} = 1;
         }
     }
+
+    
 
     ## generate report
     my @prognames = sort keys %prognames;

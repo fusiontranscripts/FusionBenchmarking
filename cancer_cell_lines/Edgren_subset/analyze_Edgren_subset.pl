@@ -33,7 +33,7 @@ main: {
     ## evaluate predictions:
     
     $cmd = "$benchmark_toolkit_basedir/fusion_preds_to_TP_FP_FN.pl "
-         . " --truth_fusions edgren.truthset "
+         . " --truth_fusions edgren.truthset.raw "
          . " --fusion_preds preds.collected.gencode_mapped.wAnnot.filt.edgren "
          . " --allow_reverse_fusion "
          . " --allow_paralogs $benchmark_data_basedir/resources/paralog_clusters.dat "
