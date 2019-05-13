@@ -7,9 +7,6 @@ cat ../preds.collected.gencode_mapped.wAnnot.filt | egrep '^(sample|BT474|MCF7|K
 
 
 
-../../benchmarking/plotters/plot_upsetR.R edgren.min3
-
-
 ## analyze accuracy
 ./analyze_Edgren_subset.pl
 
@@ -19,8 +16,12 @@ cat ../preds.collected.gencode_mapped.wAnnot.filt | egrep '^(sample|BT474|MCF7|K
 
 
 ## examine min3 agree Venn
-./eval_edgren_min_agree.pl  preds.collected.gencode_mapped.wAnnot.filt.edgren 3  > edgren.min3
+
+./eval_edgren_min_agree.consolidated.pl consolidated_edgren_predictions.dat 3 > edgren.min3
+
+../../benchmarking/plotters/plot_upsetR.R edgren.min3
 
 
+## run through standard analysis for curiosity sake
 ../../benchmarking/Venn_analysis_strategy.pl preds.collected.gencode_mapped.wAnnot.filt.edgren ../progs_select.txt
 
