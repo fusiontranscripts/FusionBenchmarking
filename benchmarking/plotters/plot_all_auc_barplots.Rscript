@@ -59,10 +59,12 @@ rankings.table = do.call(rbind, lapply(names(rankings), function(x) { cbind(prog
 
 write.table(rankings.table, file="all.auc.rankings.dat", quote=F, sep="\t")
 
-pdf("all.auc.rankings.boxplot.pdf")
+
 
 for (iu_val in c(0,1)) {
     for (okp_val in c(0,1)) {
+
+        pdf(sprintf("all.auc.rankings.iu=%d.okp=%d.boxplot.pdf", iu_val, okp_val))
 
         title = sprintf("iu=%d, okp=%d", iu_val, okp_val)
 
@@ -74,10 +76,15 @@ for (iu_val in c(0,1)) {
         p = filtered_table %>% ggplot(aes(as.factor(prog), rankval)) + geom_boxplot() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + ggtitle(title)
 
         plot(p)
+
+        dev.off()
+
+        output_rankings_file = sprintf("all.auc.rankings.iu=%d.okp=%d.dat", iu_val, okp_val)
+        write.table(ranked.progs, file=output_rankings_file, quote=F, sep="\t")
     }
 }
 
-dev.off()
+
 
 ## show how the iu and okp params change status for each prog
 pdf("all.auc.rankings_per_prog_adj.boxplot.pdf")
