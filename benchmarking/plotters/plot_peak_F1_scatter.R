@@ -17,7 +17,7 @@ data = read.table(roc_file, header=T)
 
 peak_F1_data = data %>% group_by(prog) %>% filter(! is.na(F1)) %>% filter(F1 == max(F1)) %>% arrange(desc(F1))
 
-p = peak_F1_data %>% ggplot(aes(x=PPV, y=TPR, color=prog, shape=prog)) + geom_point() + scale_shape_manual(values=seq(0,25))
+p = peak_F1_data %>% ggplot(aes(x=PPV, y=TPR, color=prog, shape=prog)) + geom_point() + scale_shape_manual(values=rep(seq(0,25), 2))
 
 pdf_filename = paste0(roc_file, ".tpr_ppv_at_maxF1_scatter.pdf")
 pdf(pdf_filename, width=9, height=4)

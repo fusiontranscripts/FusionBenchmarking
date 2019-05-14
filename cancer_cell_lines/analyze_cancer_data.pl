@@ -85,7 +85,7 @@ main: {
     
     ## run Venn-based accuracy analysis:
 
-    $cmd = "$benchmark_toolkit_basedir/Venn_analysis_strategy.pl preds.collected.gencode_mapped.wAnnot.filt.noEdgren progs_select.txt";
+    $cmd = "$benchmark_toolkit_basedir/Venn_analysis_strategy.pl preds.collected.gencode_mapped.wAnnot.filt.noEdgren progs_select.txt 3 13";
     $pipeliner->add_commands(new Command($cmd, "venn_analysis.ok"));
     
     

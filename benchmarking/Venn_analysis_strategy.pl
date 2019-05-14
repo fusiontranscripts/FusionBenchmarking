@@ -11,11 +11,12 @@ use Pipeliner;
 use Process_cmd;
 
 
-my $usage = "\n\n\tusage: $0 preds.filt.final progs.select.file\n\n";
+my $usage = "\n\n\tusage: $0 preds.filt.final progs.select.file low_agree high_agree\n\n";
 
 my $preds_file = $ARGV[0] or die $usage;
 my $progs_select_file = $ARGV[1] or die $usage;
-
+my $low_agree = $ARGV[2] or die $usage;
+my $high_agree = $ARGV[3] or die $usage;
 
 
 my $benchmark_data_basedir = "$FindBin::Bin/..";
@@ -38,8 +39,10 @@ main: {
     ######  Scoring of fusions #######
 
     #my @min_agree_truth = (3, 4, 5, 6);
-    my @min_agree_truth = (2..10);
+    #my @min_agree_truth = (2..10);
     #my @min_agree_truth = (4);
+
+    my @min_agree_truth = ($low_agree .. $high_agree);
     
     foreach my $min_agree (@min_agree_truth) {
         &score_and_plot("$preds_file", "$preds_file.byProgAgree", $min_agree);
@@ -54,7 +57,7 @@ main: {
     $cmd = "$benchmark_data_basedir/util/capture_PR_AUC_for_plotting.pl auc_files.list > all.auc.dat";
     $pipeliner->add_commands(new Command($cmd, "all_auc_dat.ok"));
 
-    $cmd = "$benchmark_data_basedir/benchmarking/plotters/plot_all_auc_barplots.Rscript";
+    $cmd = "$benchmark_data_basedir/benchmarking/plotters/plot_all_auc_barplots.Rscript $low_agree $high_agree";
     $pipeliner->add_commands(new Command($cmd, "plot_all_auc_barplots.ok"));
 
     $pipeliner->run();

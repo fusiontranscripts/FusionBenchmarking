@@ -4,12 +4,23 @@ library(tidyverse)
 library('data.table')
 
 
+args<-commandArgs(TRUE)
+
+if (length(args) != 2) {
+    stop("require param: low_val high_val")
+}
+
+low_val = as.numeric(args[1])
+high_val = as.numeric(args[2])
+
 pdf("all.auc.dat.pdf", height=20)
 
 data = read.table("all.auc.dat", header=T)
 
+num_experiments = high_val - low_val + 1
+num_plots = num_experiments*4
 
-layout(matrix(1:36, nrow=9, ncol=4, byrow=T))
+layout(matrix(1:num_plots, nrow=num_experiments, ncol=4, byrow=T))
 
 par(mar=c(2,2,2,2))
 
@@ -22,7 +33,7 @@ names(colors) = prognames
 
 rankings = list()
 
-for (mt in seq(2, 10)) {
+for (mt in seq(low_val, high_val)) {
  	for (iu in c(0,1)) {
     	for (okp in c(0,1)) {
 
