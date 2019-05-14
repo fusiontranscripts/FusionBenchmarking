@@ -60,6 +60,12 @@ main: {
     $cmd = "$benchmark_data_basedir/benchmarking/plotters/plot_all_auc_barplots.Rscript $low_agree $high_agree";
     $pipeliner->add_commands(new Command($cmd, "plot_all_auc_barplots.ok"));
 
+    $cmd = "$benchmark_data_basedir/benchmarking/aggregate_peak_F1_stats.R okPara_ignoreUnsure.results.scored.ROC.tpr_ppv_at_maxF1.dat $low_agree $high_agree";
+    $pipeliner->add_commands(new Command($cmd, "okPara_ignoreUnsure.aggregate_n_plot.ok"));
+
+    $cmd = "$benchmark_data_basedir/benchmarking/aggregate_peak_F1_stats.R ignoreUnsure.results.scored.ROC.tpr_ppv_at_maxF1.dat $low_agree $high_agree";
+    $pipeliner->add_commands(new Command($cmd, "ignoreUnsure.results.aggregate_n_plot.ok"));
+    
     $pipeliner->run();
     
     exit(0);
