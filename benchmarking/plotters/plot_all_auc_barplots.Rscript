@@ -99,7 +99,7 @@ for (iu_val in c(0,1)) {
 
 ## show how the iu and okp params change status for each prog
 pdf("all.auc.rankings_per_prog_adj.boxplot.pdf")
-p = rankings.table %>% mutate(combo=sprintf("%i,%i", iu, okp)) %>% ggplot(aes(combo, rankval)) + geom_boxplot() + facet_wrap(~prog)
+p = rankings.table %>% mutate(combo_iu_okp=sprintf("%i,%i", iu, okp)) %>% ggplot(aes(combo_iu_okp, rankval)) + geom_boxplot() + facet_wrap(~prog)
 plot(p)
 dev.off()
 
