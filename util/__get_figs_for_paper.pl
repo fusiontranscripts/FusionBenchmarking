@@ -20,10 +20,8 @@ my @targets_and_dests = (
     ## Figure 2
     
     # Fig 2-a
-    ["simulated_data/allow_rev.combined.pdf", 
+    ["simulated_data/allow_rev_and_paralogs.combined.pdf", 
      "figs_for_paper/fig_2a.sim50_vs_101.boxplots.pdf"],
-    
-
 
     # Fig 2-b_top, expression vs. sensitivity heatmap PE 50
     ["simulated_data/sim_50/__analyze_allow_rev_and_paralogs/all.scored.preds.sensitivity_vs_expr.dat.genes_vs_samples_heatmap.pdf", 
