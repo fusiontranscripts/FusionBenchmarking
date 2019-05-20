@@ -25,11 +25,11 @@ my @targets_and_dests = (
 
     # Fig 2-b_top, expression vs. sensitivity heatmap PE 50
     ["simulated_data/sim_50/__analyze_allow_rev_and_paralogs/all.scored.preds.sensitivity_vs_expr.dat.genes_vs_samples_heatmap.pdf", 
-     "figs_for_paper/fig_2b_top.sim_101.sens_vs_expr.heatmap.pdf"],
+     "figs_for_paper/fig_2b_top.sim_50.sens_vs_expr.heatmap.pdf"],
     
     # Fig 2-b_bottom, expression vs. sensitivity heatmap PE 101
     ["simulated_data/sim_101/__analyze_allow_rev_and_paralogs/all.scored.preds.sensitivity_vs_expr.dat.genes_vs_samples_heatmap.pdf",
-     "figs_for_paper/fig_2b_top.sim_101.sens_vs_expr.heatmap.pdf"],
+     "figs_for_paper/fig_2b_bottom.sim_101.sens_vs_expr.heatmap.pdf"],
     
     
     ## Figure 3
