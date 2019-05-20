@@ -97,7 +97,7 @@ my @targets_and_dests = (
     
     # supp table 2
     ["simulated_data/sim_101/preds.collected.gencode_mapped.wAnnot.filt",
-     "figs_for_paper/supp_table1.pe101_fusion_filtered_preds.tsv"],
+     "figs_for_paper/supp_table2.pe101_fusion_filtered_preds.tsv"],
     
     # supp table 4
     ["cancer_cell_lines/preds.collected.gencode_mapped.wAnnot.filt",
