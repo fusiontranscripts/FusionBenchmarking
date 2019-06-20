@@ -27,17 +27,17 @@ main: {
     $pipeliner->add_commands(new Command($cmd, "edgren.byProgAgree.ok"));
     
     ## need the unsure set defined. Basically, treat everything non-unique as unsure.
-    $cmd = "$benchmark_toolkit_basedir/define_truth_n_unsure_set.pl preds.collected.gencode_mapped.wAnnot.filt.edgren.byProgAgree 1000";
-    $pipeliner->add_commands(new Command($cmd, "define_min_agree.ok"));
-
+    #$cmd = "$benchmark_toolkit_basedir/define_truth_n_unsure_set.pl preds.collected.gencode_mapped.wAnnot.filt.edgren.byProgAgree 1000";
+    #$pipeliner->add_commands(new Command($cmd, "define_min_agree.ok"));
+    
     ## evaluate predictions:
     
     $cmd = "$benchmark_toolkit_basedir/fusion_preds_to_TP_FP_FN.pl "
-         . " --truth_fusions edgren.truthset "
+         . " --truth_fusions edgren.truthset.raw "
          . " --fusion_preds preds.collected.gencode_mapped.wAnnot.filt.edgren "
          . " --allow_reverse_fusion "
          . " --allow_paralogs $benchmark_data_basedir/resources/paralog_clusters.dat "
-         . " --unsure_fusions preds.collected.gencode_mapped.wAnnot.filt.edgren.byProgAgree.min_1000.unsure_set "
+        #. " --unsure_fusions preds.collected.gencode_mapped.wAnnot.filt.edgren.byProgAgree.min_1000.unsure_set "
          . " > preds.collected.gencode_mapped.wAnnot.filt.edgren.scored ";
 
     $pipeliner->add_commands(new Command($cmd, "edgren.TP_FP_FN.ok"));

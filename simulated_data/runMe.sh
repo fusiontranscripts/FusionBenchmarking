@@ -8,7 +8,7 @@ dirs=(sim_50 sim_101)
 for dir in ${dirs[*]}
 do
     cd $dir
-    ./runMe.sh
+    ./runMe.sh $*
     cd ../
 done
 

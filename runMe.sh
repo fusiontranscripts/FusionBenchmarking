@@ -10,7 +10,7 @@ dirs=(simulated_data cancer_cell_lines runtime_analysis)
 for dir in ${dirs[*]}
 do
     cd $dir
-    ./runMe.sh
+    ./runMe.sh $*
     cd ../
 done
 

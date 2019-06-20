@@ -5,6 +5,20 @@ use warnings;
 use Carp;
 
 
+my %restrict_progs;
+if (@ARGV) {
+    my $restrict_progs_file = $ARGV[0];
+    open(my $fh, $restrict_progs_file) or die "Error, cannot open file: $restrict_progs_file";
+    while(<$fh>) {
+        chomp;
+        unless (/\w/) { next; }
+        my $progname = $_;
+        $restrict_progs{$progname} = 1;
+    }
+    close $fh;
+}
+    
+
 ## convert prog name tokens to names used in the data table.
 my %converter = (CHIMERASCAN => 'ChimeraScan',
                  CHIMPIPE => 'ChimPipe',
@@ -22,7 +36,7 @@ my %converter = (CHIMERASCAN => 'ChimeraScan',
                  SOAP_FUSE => 'SOAP-fuse',
                  'STAR_FUSION_GRCh37v19_FL3_v51b3df4' => 'STAR_FUSION_old',
                  TOPHAT_FUSION => 'TopHat-Fusion',
-                 ARRIBA => ['ARRIBA', 'ARRIBA_hc'],
+                 ARRIBA => ['ARRIBA', 'ARRIBA_hc'], ## scoring regular and the hc subset separately
                  PIZZLY => 'PIZZLY',
                  STARCHIP => 'STARCHIP',
                  'STAR_FUSION_v1.5_hg19_Apr042019' => 'STAR_FUSION_v1.5',
@@ -48,20 +62,32 @@ while (<STDIN>) {
         
         my $sample_name = $1;
         my $prog = $2;
-        
-        my $proper_progname = $converter{$prog} or die "Error, cannot find proper prog name for $prog as run on sample $sample_name";
 
-        if (ref $proper_progname) {
-            foreach my $progname_adj (@$proper_progname) {
-                print join("\t", $sample_name, $progname_adj, $filename) . "\n";
+        if (%restrict_progs && ! exists $restrict_progs{$prog}) {
+            print STDERR "make_file_listing_input_table::  - skipping $filename, not in restricted list.\n";
+            next;
+        }
+        
+        my $proper_progname = $converter{$prog};
+
+        if ($proper_progname) {
+            ## In case we have multiple ways of parsing the file and filtering data for different assessements.
+            if (ref $proper_progname) {
+                foreach my $progname_adj (@$proper_progname) {
+                    print join("\t", $sample_name, $progname_adj, $filename) . "\n";
+                }
+            }
+            else {
+                print join("\t", $sample_name, $proper_progname, $filename) . "\n";
             }
         }
         else {
-            print join("\t", $sample_name, $proper_progname, $filename) . "\n";
+            # keep original name
+            print join("\t", $sample_name, $prog, $filename) . "\n";
         }
     }
     else {
-        print STDERR "WARNING: couldn't decipher filename $filename as fusion result file\n";
+        print STDERR "WARNING: not parsing filename as a target: $filename\n";
     }
 }
 

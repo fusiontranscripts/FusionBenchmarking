@@ -10,94 +10,103 @@ my $basedir = $ARGV[0] or die $usage;
 chdir $basedir or die "Error, cannot cd to $basedir";
 
 # make the dir structure
-my @dirs = ("sim", "cell_lines", "runtimes");
-foreach my $dir (@dirs) {
-    unless (-d $dir) {
-        &process_cmd("mkdir -p figs_for_paper/$dir");
-    }
+unless (-d "figs_for_paper") {
+    &process_cmd("mkdir -p figs_for_paper");
 }
 
+
 my @targets_and_dests = ( 
-
-
-    #####################
-    # simulated data figs
-
+        
+    ## Figure 2
+    
     # Fig 2-a
-    ["simulated_data/allow_rev.combined.pdf", 
-     "figs_for_paper/sim/fig_2a.sim50_vs_101.boxplots.pdf"],
+    ["simulated_data/allow_rev_and_paralogs.combined.pdf", 
+     "figs_for_paper/fig_2a.sim50_vs_101.boxplots.pdf"],
 
-    # Fig 2-b, expression vs. sensitivity heatmap
-    ["simulated_data/sim_101/__analyze_allow_reverse/all.scored.sensitivity_vs_expr.dat.genes_vs_samples_heatmap.pdf",
-     "figs_for_paper/sim/fig_2b.sim_101.sens_vs_expr.heatmap.pdf"],
-
-    # supp table 8 
-    ["simulated_data/sim_101/__analyze_allow_reverse/all.scored.sensitivity_vs_expr.dat",
-     "figs_for_paper/sim/supp_table_8.sim_101.sensitivity_vs_expression.tsv"],
+    # Fig 2-b_top, expression vs. sensitivity heatmap PE 50
+    ["simulated_data/sim_50/__analyze_allow_rev_and_paralogs/all.scored.preds.sensitivity_vs_expr.dat.genes_vs_samples_heatmap.pdf", 
+     "figs_for_paper/fig_2b_top.sim_50.sens_vs_expr.heatmap.pdf"],
     
-    # Supp. Fig 1a
-    ["simulated_data/sim_101/__analyze_allow_rev_and_paralogs/all.scored.ROC.best.dat.before_vs_after.pdf",
-     "figs_for_paper/sim/supp_fig_1a.sim101.before_vs_after_paraEquiv.pdf"],
-
-    # Supp. Fig 1b
-    ["simulated_data/sim_50/__analyze_allow_rev_and_paralogs/all.scored.ROC.best.dat.before_vs_after.pdf",
-     "figs_for_paper/sim/supp_fig_1b.sim50.before_vs_after_paraEquiv.pdf"],
-
+    # Fig 2-b_bottom, expression vs. sensitivity heatmap PE 101
+    ["simulated_data/sim_101/__analyze_allow_rev_and_paralogs/all.scored.preds.sensitivity_vs_expr.dat.genes_vs_samples_heatmap.pdf",
+     "figs_for_paper/fig_2b_bottom.sim_101.sens_vs_expr.heatmap.pdf"],
     
     
-
+    ## Figure 3
+    ["cancer_cell_lines/Edgren_subset/edgren.min3.UpSetR.pdf",
+     "figs_for_paper/fig_3a.four_breast_cancer_cell_lines_UpSetR_plot_2nd_page.pdf"],
+    
+    ["cancer_cell_lines/Edgren_subset/preds.collected.gencode_mapped.wAnnot.filt.edgren.scored.enrich_stats.pdf",
+     "figs_for_paper/fig_3b.valid_fusion_enrichment_2nd_page.pdf"],
+    
+    ## Figure 4
+    ["cancer_cell_lines/all.auc.rankings.iu\=1.okp\=1.boxplot.pdf",
+     "figs_for_paper/fig_4a_cancer_leaderboard_rankings.pdf"],
+    
+    ["cancer_cell_lines/__min_7_agree/min_7.okPara_ignoreUnsure.results.scored.ROC.tpr_ppv_at_maxF1_scatter.pdf",
+     "figs_for_paper/fig_4d_peak_accuracy_min7progsagree.pdf"],
+    
+    
     
     ####################
-    # cancer cell lines
-
-    # main fig 3a
-    ["cancer_cell_lines/__min_4_agree/min_4.ignoreUnsure.results.scored.PR.AUC.barplot.pdf",
-     "figs_for_paper/cell_lines/fig_3a.min_4.ignoreUnsure.PR_AUC_barplot.pdf"],
-
-    # main fig 3b
-    ["cancer_cell_lines/__min_4_agree/min_4.ignoreUnsure.results.scored.PR.plot.pdf",
-     "figs_for_paper/cell_lines/fig_3b.min_4.ignoreUnsure.PR_curve.pdf"],
-
-    # main fig 3c and 3d among others
-    ["cancer_cell_lines/__min_4_agree/min_4.ignoreUnsure.results.scored.ROC.ROC_plot.pdf",
-     "figs_for_paper/cell_lines/fig_3cd.min_4.ignoreUnsure.misc_accuracy_plots.pdf"],
-
+    ## Supplementary Figures
     
-    # Supp. Figure 2, correlation of fusion predictions among progs 
+    # supp fig 1
+    ["simulated_data/sim_50/__analyze_allow_rev_and_paralogs/all.scored.preds.ROC.TP_and_FP_counts_vs_minFrags_eaProg.pdf",
+     "figs_for_paper/supp_fig1.pe50_TP_FP_vs_minReads.pdf"],
+    
+    # supp fig 2
+    ["simulated_data/sim_101/__analyze_allow_rev_and_paralogs/all.scored.preds.ROC.TP_and_FP_counts_vs_minFrags_eaProg.pdf",
+     "figs_for_paper/supp_fig2.pe101_TP_FP_vs_minReads.pdf"],
+    
+    # supp fig 3a
+    ["simulated_data/sim_50/__analyze_allow_rev_and_paralogs/all.scored.preds.ROC.tpr_ppv_at_maxF1_scatter.pdf",
+     "figs_for_paper/supp_fig3a.pe50_max_F1_scatter.pdf"],
+    
+    # supp fig 3b
+    ["simulated_data/sim_101/__analyze_allow_rev_and_paralogs/all.scored.preds.ROC.tpr_ppv_at_maxF1_scatter.pdf",
+     "figs_for_paper/supp_fig3b.pe101_max_F1_scatter.pdf"],
+    
+    # supp fig 4
+    ["cancer_cell_lines/okPara_ignoreUnsure.results.scored.ROC.tpr_ppv_at_maxF1.dat.consolidated.scatters.pdf",
+     "figs_for_paper/supp_fig4.cancer_maxF1_ea_truthset.pdf"],
+
+    # supp fig 5
+    ["simulated_data/sim_101/__analyze_allow_rev_and_paralogs/all.scored.preds.ROC.best.dat.before_vs_after.pdf",
+     "figs_for_paper/supp_fig5.before_vs_after_paralog_equiv_pe101.pdf"],
+    
+    # supp fig 6
     ["cancer_cell_lines/preds.collected.gencode_mapped.wAnnot.filt.matrix.binary.sample_cor_matrix.pdf",
-     "figs_for_paper/cell_lines/supp_fig_2.all_prediction_correlation_matrix.pdf"],
+     "figs_for_paper/supp_fig6.cancer_correlated_preds.pdf"],
+
+    # supp fig 7
+    ["cancer_cell_lines/all.auc.rankings_per_prog_adj.boxplot.pdf",
+     "figs_for_paper/supp_fig7.effect_iu_okp_on_cancer_ranking_dist.pdf"],
+    
+    # supp fig 8
+    ["cancer_cell_lines/all.auc.rankings.iu\=1.okp\=0.boxplot.pdf",
+     "figs_for_paper/supp_fig8.cancer_rankings_equiv_para_off.pdf"],
     
     
-    # Supp. Figure 3, accuracy scoring collage of diff. truth set definitions. 
-    ["cancer_cell_lines/all.auc.dat.pdf", 
-     "figs_for_paper/cell_lines/supp_fig_3.min_4.accuracy_scoring_collage.pdf"],
-
-
-    ## cancer cell lines ROC and AUC
-
-    ["cancer_cell_lines/__min_4_agree/min_4.ignoreUnsure.results.scored.ROC",
-     "figs_for_paper/cell_lines/supp_table_9.min_4.ignoreUnsure.ROC.tsv" ],
-
-    ["cancer_cell_lines/__min_4_agree/min_4.ignoreUnsure.results.scored.PR.AUC",
-     "figs_for_paper/cell_lines/supp_table_10.min_4.ignoreUnsure.AUC.tsv" ],
-
-        
-    ##################
-    # runtime analysis
-
-    # main fig 4: runtimes on cancer cell line data
-    ["runtime_analysis/all_progs_cancer/runtimes.txt.boxplot.pdf", 
-     "figs_for_paper/runtimes/fig_4.cell_line_runtimes.boxplot.pdf"],
-
-        
-    # supp. fig 4, starF runtimes w/ multithreading for star alignment 
-    ["runtime_analysis/STAR_F_multicore/runtimes.txt.boxplot.pdf", 
-     "figs_for_paper/runtimes/supp_fig_4.StarF_multithread_runtimes.boxplot.pdf"]
+    ############################
+    ## Supplementary data files
     
+    # supp table 1
+    ["simulated_data/sim_50/preds.collected.gencode_mapped.wAnnot.filt",
+     "figs_for_paper/supp_table1.pe50_fusion_filtered_preds.tsv"],
     
-    );
+    # supp table 2
+    ["simulated_data/sim_101/preds.collected.gencode_mapped.wAnnot.filt",
+     "figs_for_paper/supp_table2.pe101_fusion_filtered_preds.tsv"],
+    
+    # supp table 4
+    ["cancer_cell_lines/preds.collected.gencode_mapped.wAnnot.filt",
+     "figs_for_paper/supp_table4.cancer_fusion_filtered_preds.tsv"],
+
+    );    
 
 
+    
 foreach my $target_and_dest (@targets_and_dests) {
 
     my ($from, $to) = @$target_and_dest;
@@ -107,36 +116,7 @@ foreach my $target_and_dest (@targets_and_dests) {
 }
 
 
-my @cmds_n_dests = (
-
     
-    ## sim_50 ROC and AUC
-    
-    ["util/make_supp_ROC_table.pl simulated_data/sim_50/__analyze_allow_reverse/ sim_50",
-     "figs_for_paper/sim/supp_table_4.sim_50.ROC.tsv"],
-    
-    ["util/make_supp_AUC_table.pl simulated_data/sim_50/__analyze_allow_reverse/ sim_50",
-     "figs_for_paper/sim/supp_table_5.sim_50.AUC.tsv"],
-    
-
-    ## sim_101 ROC and AUC
-    
-    ["util/make_supp_ROC_table.pl simulated_data/sim_101/__analyze_allow_reverse/ sim_101",
-     "figs_for_paper/sim/supp_table_6.sim_101.ROC.tsv"],
-
-    ["util/make_supp_AUC_table.pl simulated_data/sim_101/__analyze_allow_reverse/ sim_101",
-     "figs_for_paper/sim/supp_table_7.sim_101.AUC.tsv"],
-
-
-    
-    );
-
-
-foreach my $cmd_n_dest (@cmds_n_dests) {
-    my ($cmd, $dest) = @$cmd_n_dest;
-
-    &process_cmd("$cmd > $dest");
-}
     
 
 exit(0);

@@ -4,12 +4,23 @@ library(tidyverse)
 library('data.table')
 
 
+args<-commandArgs(TRUE)
+
+if (length(args) != 2) {
+    stop("require param: low_val high_val")
+}
+
+low_val = as.numeric(args[1])
+high_val = as.numeric(args[2])
+
 pdf("all.auc.dat.pdf", height=20)
 
 data = read.table("all.auc.dat", header=T)
 
+num_experiments = high_val - low_val + 1
+num_plots = num_experiments*4
 
-layout(matrix(1:36, nrow=9, ncol=4, byrow=T)) 
+layout(matrix(1:num_plots, nrow=num_experiments, ncol=4, byrow=T))
 
 par(mar=c(2,2,2,2))
 
@@ -22,12 +33,12 @@ names(colors) = prognames
 
 rankings = list()
 
-for (mt in seq(2, 10)) {
+for (mt in seq(low_val, high_val)) {
  	for (iu in c(0,1)) {
     	for (okp in c(0,1)) {
 
             title = sprintf("mA=%d, iu=%d, okp=%d", mt, iu, okp)
-            
+
 			mini_dt = dt[min_thresh==mt & ignoreUnsure==iu & okpara==okp,]
             mini_dt = mini_dt[order(-auc),]
             print(mini_dt)
@@ -37,13 +48,14 @@ for (mt in seq(2, 10)) {
             ordered_prognames = as.character(ordered_prognames)
             for (rank_val in seq(length(ordered_prognames))) {
                 myprogname = ordered_prognames[rank_val]
+                prog_auc = mini_dt[rank_val,auc]
                 if (myprogname %in% names(rankings)) {
-                    rankings[[ myprogname ]] = c(rankings[[ myprogname ]], rank_val)
+                    rankings[[ myprogname ]] = rbind(rankings[[ myprogname ]], data.frame(rankval=rank_val, mt=mt, iu=iu, okp=okp, auc=prog_auc))
                 } else {
-                    rankings[[ myprogname ]] = c(rank_val)
+                    rankings[[ myprogname ]] = data.frame(rankval=rank_val, mt=mt, iu=iu, okp=okp, auc=prog_auc)
                 }
             }
-            
+
         }
     }
 }
@@ -54,18 +66,40 @@ dev.off()
 #############################
 ## Examine relative rankings:
 
-rankings.table = do.call(rbind, lapply(names(rankings), function(x) { data.frame(prog=x, rankval=rankings[[x]]) }))
+rankings.table = do.call(rbind, lapply(names(rankings), function(x) { cbind(prog=x, rankings[[x]]) }))
 
 write.table(rankings.table, file="all.auc.rankings.dat", quote=F, sep="\t")
 
-ranked.progs = rankings.table %>% group_by(prog) %>% summarize(mr=median(rankval)) %>% arrange(mr)
 
-rankings.table$prog = factor(rankings.table$prog, levels=factor(ranked.progs$prog))
-p = rankings.table %>% ggplot(aes(as.factor(prog), rankval)) + geom_boxplot() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 
-pdf("all.auc.rankings.boxplot.pdf")
+for (iu_val in c(0,1)) {
+    for (okp_val in c(0,1)) {
+
+        pdf(sprintf("all.auc.rankings.iu=%d.okp=%d.boxplot.pdf", iu_val, okp_val))
+
+        title = sprintf("iu=%d, okp=%d", iu_val, okp_val)
+
+        filtered_table = rankings.table %>% filter(iu==iu_val & okp==okp_val)
+        ranked.progs = filtered_table %>% group_by(prog) %>% summarize(mr=median(rankval)) %>% arrange(mr)
+
+        filtered_table$prog = factor(filtered_table$prog, levels=factor(ranked.progs$prog))
+
+        p = filtered_table %>% ggplot(aes(as.factor(prog), rankval)) + geom_boxplot() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + ggtitle(title)
+
+        plot(p)
+
+        dev.off()
+
+        output_rankings_file = sprintf("all.auc.rankings.iu=%d.okp=%d.dat", iu_val, okp_val)
+        write.table(ranked.progs, file=output_rankings_file, quote=F, sep="\t")
+    }
+}
+
+
+
+## show how the iu and okp params change status for each prog
+pdf("all.auc.rankings_per_prog_adj.boxplot.pdf")
+p = rankings.table %>% mutate(combo_iu_okp=sprintf("%i,%i", iu, okp)) %>% ggplot(aes(combo_iu_okp, rankval)) + geom_boxplot() + facet_wrap(~prog)
 plot(p)
 dev.off()
-
-
 

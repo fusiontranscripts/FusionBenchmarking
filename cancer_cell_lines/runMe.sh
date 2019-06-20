@@ -11,7 +11,7 @@ fi
 
 
 
-./analyze_cancer_data.pl
+./analyze_cancer_data.pl $*
 
 
 ## Edgren subset study
