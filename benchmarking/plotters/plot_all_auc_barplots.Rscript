@@ -1,6 +1,8 @@
 #!/usr/bin/env Rscript
 
-library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
 library('data.table')
 
 

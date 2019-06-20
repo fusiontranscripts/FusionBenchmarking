@@ -10,7 +10,9 @@ if (length(args) == 0) {
 
 roc_file = args[1]
 
-library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
 
 data = read.table(roc_file, header=T)
 
