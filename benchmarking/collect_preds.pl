@@ -53,6 +53,7 @@ my %prog_type_to_file_parser = (
     'STARChip_csm10' => 'STARCHIP_parser',
     'STARCHIP_csm10' => 'STARCHIP_parser',
     'STARCHIP_csm10_pG_Apr302019' => 'STARCHIP_parser',
+    'STARCHIP_csm10_pGm2_May012019' => 'STARCHIP_parser',
     
     'TrinityFusion-D' => 'TrinityFusion_parser',
     'TrinityFusion-C' => 'TrinityFusion_parser',
@@ -97,6 +98,9 @@ main: {
             else {
                 $parser_module = $prog_type_to_file_parser{"STAR_FUSION"};
             }
+        }
+        elsif ($prog_name =~ /fusioncatcher/i) {
+            $parser_module = "FusionCatcher_parser";
         }
         else {
             die "Error, no parser for prog [$prog_name] ";
