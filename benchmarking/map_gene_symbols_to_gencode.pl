@@ -151,7 +151,8 @@ sub find_overlapping_gencode_genes {
         my @mapped_genes = &__map_genes($gene_id);
         
         foreach my $mapped_gene_id (@mapped_genes) {
-            $gencode_genes{$mapped_gene_id} = 1;
+            
+            $gencode_genes{$mapped_gene_id} = 1  unless ($mapped_gene_id =~ /^ensg/i); #not reporting ENSG vals in mapping list.
         }
     }
 
@@ -250,8 +251,7 @@ sub add_gene_struct {
         if ($gene_id =~ /$EXCLUDE_LIST/) { return; }
     }
 
-    if ($gene_id =~ /^ensg/i) { return; } ## restricting ensg conversions to alias recognition.
-
+   
     $FEATURE_COUNTER++;
 
     $struct->{FEATURE_COUNTER} = $FEATURE_COUNTER;
