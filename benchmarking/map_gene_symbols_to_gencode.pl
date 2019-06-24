@@ -22,9 +22,12 @@ my %GENE_ID_TO_GENE_STRUCTS;  # Gene_id returns list of all structs w/ that id
 my $FEATURE_COUNTER;
 my %FEATURE_ID_TO_GENE_STRUCT; # FEATURE_ID is uniqely assigned internally
 
+my %CHR_COORDS_TO_GENE_STRUCTS;  # key on chr:lend-rend, return list of structs.
+
+
 our %CHR_TO_ITREE;
 
-my $EXCLUDE_LIST = "^(Y_RNA|snoU13)\$"; ## make regex, include | separated entries
+my $EXCLUDE_LIST = "^(Y_RNA|snoU13)"; ## make regex, include | separated entries
 
 my $MAX_GENE_ALIASES = 5;
 my $MAX_GENE_RANGE_SEARCH = 2e6;
@@ -198,8 +201,11 @@ sub __map_genes {
 
         my $itree = $CHR_TO_ITREE{$chr} or die "Error, no itree for chr [$chr], " . Dumper($gene_struct);
 
+        
         my $overlaps_aref = $itree->fetch($lend, $rend);
 
+        #print STDERR "-overlapping features: " . Dumper($overlaps_aref);
+        
         foreach my $feature_id_aref (@$overlaps_aref) {
             my $feature_id = $feature_id_aref->[0];
             my $struct = $FEATURE_ID_TO_GENE_STRUCT{$feature_id};
@@ -207,12 +213,24 @@ sub __map_genes {
                 die "Error, no struct returned for feature_id: $feature_id";
             }
 
-            my $overlap_gene_id = $struct->{gene_id};
-            $overlapping_genes{$overlap_gene_id} = 1;
+
+            my $chr = $struct->{chr};
+            my $lend = $struct->{lend};
+            my $rend = $struct->{rend};
+
+            my @all_gene_structs = @{$CHR_COORDS_TO_GENE_STRUCTS{"$chr:$lend-$rend"}};
+            foreach my $overlap_gene_struct (@all_gene_structs) {
+
+                my $overlap_gene_id = $overlap_gene_struct->{gene_id};
+                                
+                $overlapping_genes{$overlap_gene_id} = 1;
+                
+                #print STDERR "- $overlap_gene_id overlaps $chr $lend-$rend\n";
+            }
         }
 
     }
-
+    
     return(keys %overlapping_genes);
 }
 
@@ -232,6 +250,7 @@ sub add_gene_struct {
         if ($gene_id =~ /$EXCLUDE_LIST/) { return; }
     }
 
+    if ($gene_id =~ /^ensg/i) { return; } ## restricting ensg conversions to alias recognition.
 
     $FEATURE_COUNTER++;
 
@@ -256,6 +275,9 @@ sub add_gene_struct {
 
     push (@{$GENE_ID_TO_GENE_STRUCTS{$gene_id}}, $struct);
 
+    push (@{$CHR_COORDS_TO_GENE_STRUCTS{"$chr:$lend-$rend"}}, $struct);
+    
+    #print STDERR "-adding " . Dumper($struct);
 
     return;
 }
@@ -292,23 +314,9 @@ sub init_interval_trees {
                        gene_id => $gene_id,
                        file => $file,
         };
-
-        &add_gene_struct($struct, $primary_target);
-
-        # in case gene ids are presented in different case from the annotations
-        if ( (! $primary_target) && lc($gene_id) ne $gene_id) {
-            
-            my $struct = { chr => $chr,
-                           lend => $lend,
-                           rend => $rend,
-                           gene_id => lc($gene_id),
-                           file => $file,
-            };
-            
         
-            &add_gene_struct($struct, $primary_target);
-            
-        }
+        &add_gene_struct($struct, $primary_target);
+        
     }
     
     return;
