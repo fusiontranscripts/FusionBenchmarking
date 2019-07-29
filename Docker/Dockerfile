@@ -51,6 +51,16 @@ RUN cpanm install Set::IntervalTree
 RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("ggplot2", dep = TRUE)'
 RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("Biobase", dep = TRUE)'
 RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("qvalue", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("fastcluster", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("tidyr", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("devtools", dep = TRUE)'
+
+## get my hacked version of upsetR
+WORKDIR $SRC
+RUN git clone https://github.com/brianjohnhaas/UpSetR.git && \
+   cd UpSetR && \
+   git checkout d72b0b5 && \
+   Rscript -e 'install.packages("./", repos=NULL, type="source", INSTALL_opts = "--with-keep.source")'
 
 
 #########
@@ -78,25 +88,10 @@ ENV TRINITY_HOME ${SRC}/trinityrnaseq
 WORKDIR $SRC
 RUN git clone https://github.com/fusiontranscripts/FusionBenchmarking.git && \
  cd FusionBenchmarking && \
- git checkout d45ef8b
-
+ git checkout fa3d7bc0ef3757a3c5c65c2f80e216128cfc9f8e
 
 
 ENV LC_ALL=C
-
-
-RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("fastcluster", dep = TRUE)'
-RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("tidyr", dep = TRUE)'
-
-RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("devtools", dep = TRUE)'
-
-## get my hacked version of upsetR
-WORKDIR $SRC
-RUN git clone https://github.com/brianjohnhaas/UpSetR.git && \
-   cd UpSetR && \
-   git checkout d72b0b5 && \
-   Rscript -e 'install.packages("./", repos=NULL, type="source", INSTALL_opts = "--with-keep.source")'
-
 
 ## mini ctat genome lib used by fusion annotator:
 COPY ctat_genome_lib_dir $SRC/ctat_genome_lib_dir/
