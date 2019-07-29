@@ -3,7 +3,7 @@ ChimPipe
 ChimeraScan
 deFuse
 EricScript
-FusionCatcher
+FUSIONCATCHER_v1.10_June192019
 FusionHunter
 InFusion
 JAFFA-Assembly

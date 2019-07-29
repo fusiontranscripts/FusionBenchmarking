@@ -8,11 +8,12 @@ use Data::Dumper;
 use Set::IntervalTree;
 
 
-my $usage = "\n\n\tusage: $0 preds.collected genes.coords.gz genes.aliases\n\n";
+my $usage = "\n\n\tusage: $0 preds.collected genes.coords.gz genes.aliases [DEBUG]\n\n";
 
 my $preds_collected_file = $ARGV[0] or die $usage;
 my $genes_coords_file = $ARGV[1] or die $usage;
 my $genes_aliases_file = $ARGV[2] or die $usage;
+my $DEBUG = $ARGV[3] || 0;
 
 ###############################################################################
 ### a few handy globals ;-)
@@ -29,7 +30,7 @@ our %CHR_TO_ITREE;
 
 my $EXCLUDE_LIST = "^(Y_RNA|snoU13)"; ## make regex, include | separated entries
 
-my $MAX_GENE_ALIASES = 5;
+my $MAX_GENE_ALIASES = 20; ## should be generous enough, warding against weirdnesses
 my $MAX_GENE_RANGE_SEARCH = 2e6;
 
 my %PRIMARY_TARGET_ACCS;
@@ -44,8 +45,10 @@ my %TRUTH_FUSION_PARTNERS;
 
 main: {
 
-    &init_interval_trees($genes_coords_file, \%PRIMARY_TARGET_ACCS);
-    
+    print STDERR "-init interval trees\n" if $DEBUG;
+    &init_interval_trees($genes_coords_file);
+
+    print STDERR "-init aliases\n" if $DEBUG;
     &init_aliases($genes_aliases_file, \%GENE_ALIASES);
 
     
@@ -57,6 +60,8 @@ main: {
     
     while (my $line = <$fh>) {
         #print STDERR $line;
+    
+        print "//\n$line\n" if $DEBUG;
         
         chomp $line;
         
@@ -68,6 +73,7 @@ main: {
 
         #print STDERR "\t** fusion: [$fusion]  \n";
         my $gencode_A_genes = &get_gencode_overlapping_genes($geneA);
+        
         my $gencode_B_genes = &get_gencode_overlapping_genes($geneB);
         
 
@@ -87,7 +93,8 @@ main: {
             # replace fusion name w/ the ENSG-vals replaced w/ gene symbols
             $x[2] = "$geneA--$geneB";
         }
-                
+
+        print "RESULT: " if $DEBUG;
         print join("\t", @x, $gencode_A_genes, $gencode_B_genes) . "\n";
         
     }
@@ -117,6 +124,8 @@ sub process_cmd {
 sub get_gencode_overlapping_genes {
     my ($gene_id) = @_;
 
+    print "-get overlapping genes for: [$gene_id]\n" if $DEBUG;
+    
     my @gencode_overlapping_genes = &find_overlapping_gencode_genes($gene_id);
     
     my $gencode_genes_text = (@gencode_overlapping_genes) ? join(",", sort @gencode_overlapping_genes) : ".";
@@ -135,27 +144,38 @@ sub find_overlapping_gencode_genes {
 
     foreach my $gene_id (split(/,/, $gene_id_listing) ) {
 
+        print "\t-examining [$gene_id] for overlaps\n" if $DEBUG;
         unless ($gene_id =~ /\w/) { next; }
         
         # retain original gene_id if recognized as primary
         if ($PRIMARY_TARGET_ACCS{$gene_id}) {
             $gencode_genes{$gene_id} = 1;
+            print "\t\t** [$gene_id] is flagged as primary.\n" if $DEBUG;
         }
         
         # retain if we identify and recognize an alias for the id 
         my $alias = $GENE_ALIASES{$gene_id};
         if ($alias && $PRIMARY_TARGET_ACCS{$alias}) {
             $gencode_genes{$alias} = 1;
+            print "\t\t** alias for [$gene_id] = [$alias] is found as primary.\n" if $DEBUG;
         }
-                
-        my @mapped_genes = &__map_genes($gene_id);
         
-        foreach my $mapped_gene_id (@mapped_genes) {
+        my @mapped_genes = &__map_genes($gene_id);
+
+        @mapped_genes = grep { $_ !~ /^ensg/i } @mapped_genes; #not reporting ENSG vals in mapping list.
+
+        if (scalar(@mapped_genes) <= $MAX_GENE_ALIASES) { 
             
-            $gencode_genes{$mapped_gene_id} = 1  unless ($mapped_gene_id =~ /^ensg/i); #not reporting ENSG vals in mapping list.
+            foreach my $mapped_gene_id (@mapped_genes) {
+                
+                $gencode_genes{$mapped_gene_id} = 1;
+            }
+        }
+        else {
+            print "\t\t\t !! too many mapped genes for [$gene_id]. Not using mappings here. (mappings included: @mapped_genes)\n" if $DEBUG;
         }
     }
-
+    
 
     my @candidate_gencode_genes = keys %gencode_genes;
 
@@ -169,15 +189,10 @@ my %reported_missing_gene;
 sub __map_genes {
     my ($gene_id) = @_;
 
+    print STDERR "\t\t\t-mapping gene: $gene_id to overlaps\n" if $DEBUG;
+    
     my $gene_structs_aref = $GENE_ID_TO_GENE_STRUCTS{$gene_id} || $GENE_ID_TO_GENE_STRUCTS{ lc $gene_id};
 
-    
-    #unless ($gene_structs_aref) {
-    #    # try again, removing any trailing version number
-    #    $gene_id =~ s/\.\d+$//;
-    #    $gene_structs_aref = $GENE_ID_TO_GENE_STRUCTS{$gene_id} || $GENE_ID_TO_GENE_STRUCTS{ lc $gene_id};
-    #}
-    
     unless (ref $gene_structs_aref) {
         unless ($reported_missing_gene{$gene_id}) {
             print STDERR "-warning, no gene stored for identifier: [$gene_id]\n";
@@ -194,17 +209,19 @@ sub __map_genes {
         my $chr = $gene_struct->{chr};
         my $lend = $gene_struct->{lend};
         my $rend = $gene_struct->{rend};
-
+        
+        print "\t\t\t[$gene_id] given coords: $chr:$lend-$rend ... examining overlaps\n" if $DEBUG;
+        
         my $search_dist = $rend - $lend + 1;
         if ($search_dist > $MAX_GENE_RANGE_SEARCH) {
+            print "\t\t\t\tsearch dist: $search_dist exceeds max allowed: $MAX_GENE_RANGE_SEARCH\n" if $DEBUG;
             next;
         }
-
+        
         my $itree = $CHR_TO_ITREE{$chr} or die "Error, no itree for chr [$chr], " . Dumper($gene_struct);
-
         
         my $overlaps_aref = $itree->fetch($lend, $rend);
-
+        
         #print STDERR "-overlapping features: " . Dumper($overlaps_aref);
         
         foreach my $feature_id_aref (@$overlaps_aref) {
@@ -226,10 +243,10 @@ sub __map_genes {
                                 
                 $overlapping_genes{$overlap_gene_id} = 1;
                 
-                #print STDERR "- $overlap_gene_id overlaps $chr $lend-$rend\n";
+                print "\t\t\t\t$overlap_gene_id overlaps $chr $lend-$rend\n" if $DEBUG;
             }
         }
-
+        
     }
     
     return(keys %overlapping_genes);
@@ -284,7 +301,7 @@ sub add_gene_struct {
 
 ####
 sub init_interval_trees {
-    my ($gene_coords_file, $primary_target_accs_href) = @_;
+    my ($gene_coords_file) = @_;
     
     print STDERR "-parsing annotation gene spans\n";
 
@@ -302,9 +319,9 @@ sub init_interval_trees {
         my ($gene_id, $chr, $lend, $rend, $file, $primary_target) = split(/\t/);
 
         if ($primary_target) {
-            $primary_target_accs_href->{$primary_target} = 1;
+            $PRIMARY_TARGET_ACCS{$gene_id} = 1;
         }
-
+        
         
         ($lend, $rend) = sort {$a<=>$b} ($lend, $rend); # just to be sure.
 

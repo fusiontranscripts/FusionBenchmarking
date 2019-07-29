@@ -18,8 +18,7 @@ my %prog_type_to_file_parser = (
     'deFuse' => 'DEFUSE_parser',
     'EricScript' => 'EricScript_parser',
 
-    'FusionCatcher' => 'FusionCatcher_parser',
-    'FC_V0997c' => 'FusionCatcher_parser',
+    'Fusion.*Catcher' => 'FusionCatcher_parser',
     
     'FusionHunter' => 'FusionHunter_parser',
 
