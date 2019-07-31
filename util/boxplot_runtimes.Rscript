@@ -14,14 +14,14 @@ dt_median_time = dt[,.(median_time_h=median(time_h, na.rm=T)), by=.(prog)][order
 
 data$prog = factor(data$prog, levels=factor(dt_median_time$prog))
 
-
+write.table(dt_median_time, 'median_runtimes.txt', quote=F, sep="\t")
 
 pdf_filename = paste(dat_filename, '.boxplot.pdf', sep='')
 pdf(pdf_filename)
 
 p = ggplot(data, aes(factor(prog), time_h)) +
     geom_boxplot(outlier.shape=NA) +
-    theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+    theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + ylim(c(0,120))
 
 plot(p)
 
