@@ -1,0 +1,6 @@
+/data/FusionBenchmarkingWorkspace/benchmarking/collected_preds_to_fusion_prog_support_listing.pl preds.collected.gencode_mapped.wAnnot.filt.noEdgren progs_select.txt > preds.collected.gencode_mapped.wAnnot.filt.noEdgren.byProgAgree
+find __min_* -regex ".*PR.AUC" | tee auc_files.list
+/data/FusionBenchmarkingWorkspace/benchmarking/../util/capture_PR_AUC_for_plotting.pl auc_files.list > all.auc.dat
+/data/FusionBenchmarkingWorkspace/benchmarking/../benchmarking/plotters/plot_all_auc_barplots.Rscript 3 10
+/data/FusionBenchmarkingWorkspace/benchmarking/../benchmarking/aggregate_peak_F1_stats.R okPara_ignoreUnsure.results.scored.ROC.tpr_ppv_at_maxF1.dat 3 10
+/data/FusionBenchmarkingWorkspace/benchmarking/../benchmarking/aggregate_peak_F1_stats.R ignoreUnsure.results.scored.ROC.tpr_ppv_at_maxF1.dat 3 10

@@ -1,0 +1,9 @@
+/data/FusionBenchmarkingWorkspace/benchmarking/fusion_preds_to_TP_FP_FN.pl --truth_fusions /data/FusionBenchmarkingWorkspace/cancer_cell_lines/__min_7_agree/preds.collected.gencode_mapped.wAnnot.filt.noEdgren.byProgAgree.min_7.truth_set --fusion_preds /data/FusionBenchmarkingWorkspace/cancer_cell_lines/preds.collected.gencode_mapped.wAnnot.filt.noEdgren --allow_reverse_fusion  --allow_paralogs /data/FusionBenchmarkingWorkspace/benchmarking/../resources/paralog_clusters.dat  --unsure_fusions /data/FusionBenchmarkingWorkspace/cancer_cell_lines/__min_7_agree/preds.collected.gencode_mapped.wAnnot.filt.noEdgren.byProgAgree.min_7.unsure_set > min_7.okPara_ignoreUnsure.results.scored
+/data/FusionBenchmarkingWorkspace/benchmarking/all_TP_FP_FN_to_ROC.pl min_7.okPara_ignoreUnsure.results.scored > min_7.okPara_ignoreUnsure.results.scored.ROC
+/data/FusionBenchmarkingWorkspace/benchmarking/plotters/plot_ROC.Rscript min_7.okPara_ignoreUnsure.results.scored.ROC
+/data/FusionBenchmarkingWorkspace/benchmarking/plotters/plot_F1_vs_min_frags.R min_7.okPara_ignoreUnsure.results.scored.ROC
+/data/FusionBenchmarkingWorkspace/benchmarking/plotters/plot_peak_F1_scatter.R min_7.okPara_ignoreUnsure.results.scored.ROC
+/data/FusionBenchmarkingWorkspace/benchmarking/plotters/plot_TP_FP_vs_minSum_per_prog.R min_7.okPara_ignoreUnsure.results.scored.ROC
+/data/FusionBenchmarkingWorkspace/benchmarking/calc_PR.py --in_ROC min_7.okPara_ignoreUnsure.results.scored.ROC --min_read_support 3 --out_PR min_7.okPara_ignoreUnsure.results.scored.PR | sort -k2,2gr | tee min_7.okPara_ignoreUnsure.results.scored.PR.AUC
+/data/FusionBenchmarkingWorkspace/benchmarking/plotters/plotPRcurves.R min_7.okPara_ignoreUnsure.results.scored.PR min_7.okPara_ignoreUnsure.results.scored.PR.plot.pdf
+/data/FusionBenchmarkingWorkspace/benchmarking/plotters/AUC_barplot.Rscript min_7.okPara_ignoreUnsure.results.scored.PR.AUC

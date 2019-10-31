@@ -1,0 +1,25 @@
+prog	mr
+1	STAR_FUSION_v1.5	1
+2	ARRIBA	2
+3	ARRIBA_hc	3
+4	STARSEQR	4
+5	ChimPipe	5
+6	TrinityFusion-C	6.5
+7	FUSIONCATCHER_v1.10_June192019	7
+8	SOAP-fuse	8
+9	TrinityFusion-UC	9
+10	InFusion	10
+11	MapSplice	11
+12	STARCHIP_csm10_pGm2_May012019	12
+13	TopHat-Fusion	14
+14	TrinityFusion-D	14
+15	PRADA	14.5
+16	PIZZLY	15
+17	JAFFA-Direct	17
+18	JAFFA-Assembly	18
+19	ChimeraScan	19
+20	JAFFA-Hybrid	20.5
+21	FusionHunter	20.5
+22	nFuse	22
+23	deFuse	22.5
+24	EricScript	24
