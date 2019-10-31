@@ -1,0 +1,8 @@
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/all_TP_FP_FN_to_ROC.pl fusion_preds.txt.scored > fusion_preds.txt.scored.ROC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plot_ROC.Rscript fusion_preds.txt.scored.ROC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plot_F1_vs_min_frags.R fusion_preds.txt.scored.ROC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plot_peak_F1_scatter.R fusion_preds.txt.scored.ROC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plot_TP_FP_vs_minSum_per_prog.R fusion_preds.txt.scored.ROC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/calc_PR.py --in_ROC fusion_preds.txt.scored.ROC --out_PR fusion_preds.txt.scored.PR | sort -k2,2gr | tee fusion_preds.txt.scored.PR.AUC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plotPRcurves.R fusion_preds.txt.scored.PR fusion_preds.txt.scored.PR.plot.pdf
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/AUC_barplot.Rscript fusion_preds.txt.scored.PR.AUC

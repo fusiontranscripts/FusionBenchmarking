@@ -1,0 +1,6 @@
+find ./samples -type f | /data/FusionBenchmarkingWorkspace/simulated_data/../util/make_file_listing_input_table.pl /data/FusionBenchmarkingWorkspace/progs_restrict.txt > fusion_result_file_listing.dat
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/collect_preds.pl fusion_result_file_listing.dat > preds.collected
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/map_gene_symbols_to_gencode.pl  preds.collected  /data/FusionBenchmarkingWorkspace/simulated_data/../resources/genes.coords.gz  /data/FusionBenchmarkingWorkspace/simulated_data/../resources/genes.aliases  > preds.collected.gencode_mapped 
+/usr/local/src/FusionAnnotator/FusionAnnotator --annotate preds.collected.gencode_mapped  -C 2 > preds.collected.gencode_mapped.wAnnot
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/filter_collected_preds.pl preds.collected.gencode_mapped.wAnnot > preds.collected.gencode_mapped.wAnnot.filt
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plot_before_vs_after_filt_TP_FP_compare.Rscript  __analyze_allow_reverse/all.scored.preds.ROC.best.dat  __analyze_allow_rev_and_paralogs/all.scored.preds.ROC.best.dat 
