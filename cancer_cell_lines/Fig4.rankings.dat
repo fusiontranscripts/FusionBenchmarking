@@ -1,4 +1,4 @@
-rankval	mt	iu
+rankval	rank	min_thresh
 STAR_FUSION_v1.5	2	3
 STAR_FUSION_v1.5	1	4
 STAR_FUSION_v1.5	1	5
