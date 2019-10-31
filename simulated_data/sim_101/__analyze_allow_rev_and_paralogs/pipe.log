@@ -1,0 +1,7 @@
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/all_TP_FP_FN_to_ROC.pl all.scored.preds > all.scored.preds.ROC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plot_ROC.Rscript all.scored.preds.ROC
+/data/FusionBenchma/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/fusion_preds_sensitivity_vs_expr.avg_replicates.pl all.scored.preds /data/FusionBenchmarkingWorkspace/simulated_data/sim_101/sim_101.fusion_TPM_values.dat > all.scored.preds.sensitivity_vs_expr.dat
+/usr/local/src/trinityrnaseq/Analysis/DifferentialExpression/PtR   -m all.scored.preds.sensitivity_vs_expr.dat  --heatmap  --sample_clust none --gene_clust ward  --heatmap_colorscheme 'black,purple,yellow'
+.preds.PR | sort -k2,2gr | tee all.scored.preds.PR.AUC
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/plotPRcurves.R all.scored.preds.PR all.scored.preds.PR.plot.pdf
+/data/FusionBenchmarkingWorkspace/simulated_data/../benchmarking/plotters/AUC_barplot.Rscript all.scored.preds.PR.AUC
