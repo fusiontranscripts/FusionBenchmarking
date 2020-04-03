@@ -19,6 +19,7 @@ my %prog_type_to_file_parser = (
     'EricScript' => 'EricScript_parser',
 
     'Fusion.*Catcher' => 'FusionCatcher_parser',
+    'FC_V0997c' => 'FusionCatcher_parser',
     
     'FusionHunter' => 'FusionHunter_parser',
 
