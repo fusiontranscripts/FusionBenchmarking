@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use FindBin;
+use lib ("$FindBin::Bin/../PerlLib");
 
 
 my $usage = "usage: $0 fusion_result_file_listing.dat\n\n";
