@@ -25,7 +25,8 @@ my %prog_type_to_file_parser = (
     'FusionHunter' => 'FusionHunter_parser',
 
     'FusionInspector' => 'FusionInspector_parser',
-        
+    'FI-*' => 'FusionInspector_parser',
+    
     'InFusion' => 'InFusion_parser', 
 
     'JAFFA-Assembly' => 'JAFFA_parser',
@@ -41,6 +42,7 @@ my %prog_type_to_file_parser = (
     'SOAP-fuse' => 'SOAPfuse_parser',
 
     'STAR_FUSION' => 'STARFusion_parser',
+    'starfusion' => 'STARFusion_parser', 
     
     'TopHat-Fusion' => 'TopHatFusion_parser',
 

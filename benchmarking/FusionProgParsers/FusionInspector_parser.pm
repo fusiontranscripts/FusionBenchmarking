@@ -9,7 +9,15 @@ sub parse_fusion_result_file {
 
     my @fusions;
 
-    open (my $fh, $FI_file) or die "Error, cannot open file $FI_file";
+    my $fh;
+
+    if ($FI_file =~ /\.gz$/) {
+        open ($fh, "gunzip -c $FI_file | ") or die "Error, cannot open file $FI_file";
+    }
+    else {
+        open ($fh, $FI_file) or die "Error, cannot open file $FI_file";
+    }
+    
     my $header = <$fh>;
 
     my @x = split(/\t/, $header);
@@ -29,11 +37,19 @@ sub parse_fusion_result_file {
         my $chr_coords_A = $x[ $idx{'LeftBreakpoint'} ];
         my $fusion_gene_B = $x[ $idx{'RightGene'} ];
         my $chr_coords_B = $x[ $idx{'RightBreakpoint'} ];
-
+        
+        my $LeftBreakDinuc = uc $x[ $idx{'LeftBreakDinuc'} ];
+        my $RightBreakDinuc = uc $x[ $idx{'RightBreakDinuc'} ];
+        
+        my $splice_combo = "${LeftBreakDinuc}-${RightBreakDinuc}";
+        if ($splice_combo !~ /^(GT\-AG|GC\-AG|CT\-AC)$/) { next; } # require canonical splice breakpoints, eliminate RT-artifacts
+        
         my $rest;
         ($fusion_gene_A, $rest) = split(/\^/, $fusion_gene_A);
         ($fusion_gene_B, $rest) = split(/\^/, $fusion_gene_B);
 
+        if ($junction_reads < 1) { next; } # require at least one junction read
+        
         if ($fusion_gene_A eq $fusion_gene_B) { next; } # no self-fusions
 
         my ($chrA, $coordA, $orientA) = split(/:/, $chr_coords_A);
