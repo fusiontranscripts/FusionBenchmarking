@@ -21,7 +21,6 @@ my $DEBUG = $ARGV[3] || 0;
 my %GENE_ID_TO_GENE_STRUCTS;  # Gene_id returns list of all structs w/ that id
 
 my $FEATURE_COUNTER;
-my %FEATURE_ID_TO_GENE_STRUCT; # FEATURE_ID is uniqely assigned internally
 
 my %CHR_COORDS_TO_GENE_STRUCTS;  # key on chr:lend-rend, return list of structs.
 
@@ -30,7 +29,7 @@ our %CHR_TO_ITREE;
 
 my $EXCLUDE_LIST = "^(Y_RNA|snoU13)"; ## make regex, include | separated entries
 
-my $MAX_GENE_ALIASES = 20; ## should be generous enough, warding against weirdnesses
+my $MAX_GENE_ALIASES = 1000; ## should be generous enough, warding against weirdnesses
 my $MAX_GENE_RANGE_SEARCH = 2e6;
 
 my %PRIMARY_TARGET_ACCS;
@@ -225,25 +224,16 @@ sub __map_genes {
         #print STDERR "-overlapping features: " . Dumper($overlaps_aref);
         
         foreach my $feature_id_aref (@$overlaps_aref) {
-            my $feature_id = $feature_id_aref->[0];
-            my $struct = $FEATURE_ID_TO_GENE_STRUCT{$feature_id};
-            unless($struct) {
-                die "Error, no struct returned for feature_id: $feature_id";
-            }
+            my $chr_span_token = $feature_id_aref->[0];
 
-
-            my $chr = $struct->{chr};
-            my $lend = $struct->{lend};
-            my $rend = $struct->{rend};
-
-            my @all_gene_structs = @{$CHR_COORDS_TO_GENE_STRUCTS{"$chr:$lend-$rend"}};
+            my @all_gene_structs = @{$CHR_COORDS_TO_GENE_STRUCTS{"$chr_span_token"}};
             foreach my $overlap_gene_struct (@all_gene_structs) {
 
                 my $overlap_gene_id = $overlap_gene_struct->{gene_id};
                                 
                 $overlapping_genes{$overlap_gene_id} = 1;
                 
-                print "\t\t\t\t$overlap_gene_id overlaps $chr $lend-$rend\n" if $DEBUG;
+                print "\t\t\t\t$overlap_gene_id overlaps $chr_span_token\n" if $DEBUG;
             }
         }
         
@@ -282,14 +272,10 @@ sub add_gene_struct {
         $itree = $CHR_TO_ITREE{$chr} = Set::IntervalTree->new;
     }
 
-    #$itree->insert($FEATURE_COUNTER, $lend, $rend);
-
-    if ($is_target) {
-        $itree->insert([$FEATURE_COUNTER], $lend, $rend);
+    if ( ! exists $CHR_COORDS_TO_GENE_STRUCTS{"$chr:$lend-$rend"}) {
+        $itree->insert(["$chr:$lend-$rend"], $lend, $rend);
     }
-
-    $FEATURE_ID_TO_GENE_STRUCT{$FEATURE_COUNTER} = $struct;
-
+    
     push (@{$GENE_ID_TO_GENE_STRUCTS{$gene_id}}, $struct);
 
     push (@{$CHR_COORDS_TO_GENE_STRUCTS{"$chr:$lend-$rend"}}, $struct);
