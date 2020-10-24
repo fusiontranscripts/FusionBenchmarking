@@ -36,7 +36,9 @@ my %PRIMARY_TARGET_ACCS;
 
 my %GENE_ALIASES;
 
-my %TRUTH_FUSION_PARTNERS;
+
+my %CACHED_GENE_MAPPINGS; # speed up by not repeating expensive work
+
 
 ##############################################################################
 
@@ -65,6 +67,7 @@ main: {
         chomp $line;
         
         my @x = split(/\t/, $line);
+        my $progname = $x[1];
         my $fusion = $x[2];
         my ($geneA, $geneB) = split(/--/, $fusion);
         
@@ -78,17 +81,25 @@ main: {
 
         if ($fusion =~ /ENSG/) {
 
+            # convert ensembl identifiers to gene symbols
+            
             if ($geneA =~ /ENSG/) {
                 if (my $alias = $GENE_ALIASES{$geneA}) {
                     $geneA = $alias;
+                }
+                else {
+                    print STDERR "-warning, couldn't convert $geneA of $progname $fusion to gene symbol... alias lacking\n";
                 }
             }
             if ($geneB =~ /ENSG/) {
                 if (my $alias = $GENE_ALIASES{$geneB}) {
                     $geneB = $alias;
                 }
+                else {
+                    print STDERR "-warning, couldn't convert $geneB of $progname $fusion to gene symbol... alias lacking\n";
+                }
             }
-
+            
             # replace fusion name w/ the ENSG-vals replaced w/ gene symbols
             $x[2] = "$geneA--$geneB";
         }
@@ -143,26 +154,37 @@ sub find_overlapping_gencode_genes {
 
     foreach my $gene_id (split(/,/, $gene_id_listing) ) {
 
-        print "\t-examining [$gene_id] for overlaps\n" if $DEBUG;
-        unless ($gene_id =~ /\w/) { next; }
+        my @mapped_genes;
         
-        # retain original gene_id if recognized as primary
-        if ($PRIMARY_TARGET_ACCS{$gene_id}) {
-            $gencode_genes{$gene_id} = 1;
-            print "\t\t** [$gene_id] is flagged as primary.\n" if $DEBUG;
+        if (my $cached_gene_mappings_aref = $CACHED_GENE_MAPPINGS{$gene_id}) {
+            @mapped_genes = @$cached_gene_mappings_aref;
+            print "\t\t** using cached gene mappings for $gene_id as: @mapped_genes\n" if $DEBUG;
+        }
+        else {
+
+            print "\t-examining [$gene_id] for overlaps\n" if $DEBUG;
+            unless ($gene_id =~ /\w/) { next; }
+            
+            # retain original gene_id if recognized as primary
+            if ($PRIMARY_TARGET_ACCS{$gene_id}) {
+                $gencode_genes{$gene_id} = 1;
+                print "\t\t** [$gene_id] is flagged as primary.\n" if $DEBUG;
+            }
+            
+            # retain if we identify and recognize an alias for the id 
+            my $alias = $GENE_ALIASES{$gene_id};
+            if ($alias && $PRIMARY_TARGET_ACCS{$alias}) {
+                $gencode_genes{$alias} = 1;
+                print "\t\t** alias for [$gene_id] = [$alias] is found as primary.\n" if $DEBUG;
+            }
+            
+            @mapped_genes = &__map_genes($gene_id);
+            
+            @mapped_genes = grep { $_ !~ /^ensg/i } @mapped_genes; #not reporting ENSG vals in mapping list.
+            
+            $CACHED_GENE_MAPPINGS{$gene_id} = [@mapped_genes];
         }
         
-        # retain if we identify and recognize an alias for the id 
-        my $alias = $GENE_ALIASES{$gene_id};
-        if ($alias && $PRIMARY_TARGET_ACCS{$alias}) {
-            $gencode_genes{$alias} = 1;
-            print "\t\t** alias for [$gene_id] = [$alias] is found as primary.\n" if $DEBUG;
-        }
-        
-        my @mapped_genes = &__map_genes($gene_id);
-
-        @mapped_genes = grep { $_ !~ /^ensg/i } @mapped_genes; #not reporting ENSG vals in mapping list.
-
         if (scalar(@mapped_genes) <= $MAX_GENE_ALIASES) { 
             
             foreach my $mapped_gene_id (@mapped_genes) {
