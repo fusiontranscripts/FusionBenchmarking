@@ -16,5 +16,6 @@ fi
 
 ## Edgren subset study
 
-cd Edgren_subset && ./runMe.sh
-
+if [ $* ]; then
+    cd Edgren_subset && ./runMe.sh
+fi

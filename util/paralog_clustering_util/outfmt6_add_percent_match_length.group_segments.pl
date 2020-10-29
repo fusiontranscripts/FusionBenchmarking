@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use FindBin;
-use lib "$FindBin::Bin/../../lib";
+use lib "$FindBin::Bin/../../PerlLib";
 use Fasta_reader;
 use List::Util qw(min max);
 use Overlap_piler;
