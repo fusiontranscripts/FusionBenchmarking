@@ -6,7 +6,7 @@ use warnings;
 use Carp;
 use Getopt::Long qw(:config posix_default no_ignore_case bundling pass_through);
 use FindBin;
-use lib ("$FindBin::Bin/../../lib");
+use lib ("$FindBin::Bin/../../PerlLib");
 use Pipeliner;
 use File::Basename;
 
@@ -78,8 +78,6 @@ main: {
         
         my %best_hits;
         
-
-
         open (my $fh, $outfmt6_grouped_file) or die "Error, cannot open file $outfmt6_grouped_file";
         while (<$fh>) {
             if (/^\#/) { next; }
@@ -88,6 +86,10 @@ main: {
             my ($transA, $transB, $per_id, $E_value, @rest) = split(/\t/);
             my $per_len_match = pop @rest;
             
+            if ($E_value == 0) {
+                $E_value = 1e-200;
+            }
+                        
             if ($per_len_match >= $min_pct_len && $per_id >= $min_per_id) {
                 my $geneA = &parse_gene_name($transA);
                 my $geneB = &parse_gene_name($transB);

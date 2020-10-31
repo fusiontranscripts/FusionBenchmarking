@@ -1,0 +1,34 @@
+~/GITHUB/CTAT_FUSIONS/ctat-genome-lib-builder/util/gtf_file_to_feature_seqs.pl  --gtf_file gencode.v22.annotation.gtf --genome_fa GRCh38.primary_assembly.genome.fa --seqType CDSplus > gencode.v22.annotation.cdsplus.fa
+
+
+~/GITHUB/CTAT_FUSIONS/ctat-genome-lib-builder/util/gtf_file_to_feature_seqs.pl  --gtf_file gencode.v19.annotation.gtf --genome_fa GRCh37.p13.genome.primary.fa --seqType CDSplus > gencode.v19.annotation.cdsplus.fa
+
+
+c GRCh37/gencode.v19.annotation.cdsplus.fa  |  perl -lane 's/>/>gv19./; print;' > GRCh37/gencode.v19.annotation.cdsplus.fa.mod
+
+c GRCh38/gencode.v22.annotation.cdsplus.fa  | perl -lane 's/>/>gv22./; print;' > GRCh38/gencode.v22.annotation.cdsplus.fa.mod
+
+c  GRCh37/gencode.v19.annotation.cdsplus.fa.mod GRCh38/gencode.v22.annotation.cdsplus.fa.mod > gencode.combined.cdsplus.fa
+
+makeblastdb -in gencode.combined.cdsplus.fa -dbtype nucl
+
+mkdir tmpdir; ~/GITHUB/CTAT_FUSIONS/ctat-genome-lib-builder/util/dfam_repeat_masker.pl --dfam_hmm /seq/RNASEQ/TOOLS/DFAM/homo_sapiens_dfam.hmm --target_fa gencode.combined.cdsplus.fa --out_masked gencode.combined.cdsplus.dfam_masked.fa --CPU 10 --tmpdir ./tmpdir 2>&1 | tee run.dfam.log
+
+## blast
+
+makeblastdb -in gencode.combined.cdsplus.dfam_masked.fa -dbtype nucl
+
+blastn -query  gencode.combined.cdsplus.dfam_masked.fa -db  gencode.combined.cdsplus.dfam_masked.fa -max_target_seqs 10000 -outfmt 6 -evalue 1e-3 -lcase_masking  -num_threads 20 -word_size 11  >  blast_pairs.outfmt6 
+
+
+## prep for paralog clustering
+
+~/GITHUB/CTAT_FUSIONS/FusionBenchmarking/util/paralog_clustering_util/outfmt6_add_percent_match_length.group_segments.pl blast_pairs.outfmt6 gencode.combined.cdsplus.fa gencode.combined.cdsplus.fa > blast_pairs.outfmt6.grouped
+
+~/GITHUB/CTAT_FUSIONS/FusionBenchmarking/util/paralog_clustering_util/blast_outfmt6_replace_trans_id_w_gene_symbol.pl gencode.combined.cdsplus.dfam_masked.fa  blast_pairs.outfmt6.grouped >  blast_pairs.outfmt6.grouped.genesym
+
+cat blast_pairs.outfmt6.grouped.genesym | sort -k4,4g -k3,3gr > blast_pairs.outfmt6.grouped.genesym.sorted
+
+~/GITHUB/CTAT_FUSIONS/FusionBenchmarking/util/paralog_clustering_util/get_top_blast_pairs.pl blast_pairs.outfmt6.grouped.genesym.sorted > blast_pairs.outfmt6.grouped.genesym.sorted.top
+
+ ~/GITHUB/CTAT_FUSIONS/FusionBenchmarking/util/paralog_clustering_util/outfmt6_add_percent_match_length.group_segments.to_Markov_Clustering.pl  --outfmt6_grouped  blast_pairs.outfmt6.grouped.genesym.sorted.top --min_pct_len 1 --min_per_id 90 --inflation_factor 3
