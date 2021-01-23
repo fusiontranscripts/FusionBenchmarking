@@ -88,7 +88,7 @@ main: {
                     $geneA = $alias;
                 }
                 else {
-                    print STDERR "-warning, couldn't convert $geneA of $progname $fusion to gene symbol... alias lacking\n";
+                    #print STDERR "-warning, couldn't convert $geneA of $progname $fusion to gene symbol... alias lacking\n";
                 }
             }
             if ($geneB =~ /ENSG/) {
@@ -96,7 +96,7 @@ main: {
                     $geneB = $alias;
                 }
                 else {
-                    print STDERR "-warning, couldn't convert $geneB of $progname $fusion to gene symbol... alias lacking\n";
+                    #print STDERR "-warning, couldn't convert $geneB of $progname $fusion to gene symbol... alias lacking\n";
                 }
             }
             
