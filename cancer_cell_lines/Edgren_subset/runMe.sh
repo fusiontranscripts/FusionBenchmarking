@@ -26,3 +26,9 @@ cat ../preds.collected.gencode_mapped.wAnnot.filt | egrep '^(sample|BT474|MCF7|K
 
 ## run through standard analysis for curiosity sake
 ../../benchmarking/Venn_analysis_strategy.pl preds.collected.gencode_mapped.wAnnot.filt.edgren ../progs_select.txt 3 10
+
+
+## upsetR for all validated fusions
+./eval_edgren_any_TP.consolidated.pl consolidated_edgren_predictions.dat > edgren.validated_only
+
+../../benchmarking/plotters/plot_upsetR.R edgren.validated_only
