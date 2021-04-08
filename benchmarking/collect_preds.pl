@@ -43,6 +43,7 @@ my %prog_type_to_file_parser = (
 
     'STAR_FUSION' => 'STARFusion_parser',
     'starfusion' => 'STARFusion_parser', 
+    'STARF' => 'STARFusion_parser', 
     
     'TopHat-Fusion' => 'TopHatFusion_parser',
 
