@@ -14,7 +14,7 @@ while(<$fh>) {
     my $fusion_name = $x[2];
     my $annot = $x[7];
     
-    if ($fusion_name =~ /HLA/ 
+    if ($fusion_name =~ /(^HLA\-)|\-HLA\-/ 
         ||
         ($annot && 
          ($annot =~ /chrM:/i
