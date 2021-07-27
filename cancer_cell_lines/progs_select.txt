@@ -15,6 +15,6 @@ PRADA
 SOAP-fuse
 STARCHIP_csm10_pGm2_May012019
 STARSEQR
-STAR_FUSION_v1.5
+#STAR_FUSION_v1.5
 TopHat-Fusion
 TrinityFusion-C

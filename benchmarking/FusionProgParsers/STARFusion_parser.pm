@@ -47,7 +47,18 @@ sub parse_fusion_result_file {
 
     my @fusions;
 
-    open (my $fh, $starFusion_file) or die "Error, cannot open file $starFusion_file";
+    my $fh;
+
+    if ($starFusion_file =~ /\.gz$/) {
+        open($fh, "gunzip -c $starFusion_file | ");
+    }
+    else {
+        open ($fh, $starFusion_file) or die "Error, cannot open file $starFusion_file";
+    }
+    
+    unless($fh) {
+        confess "Error, no filehandle opened on $starFusion_file";
+    }
     
     my $tab_reader = new DelimParser::Reader($fh, "\t");
     
