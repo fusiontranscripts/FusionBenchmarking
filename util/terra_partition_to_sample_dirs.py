@@ -18,7 +18,8 @@ def main():
 
     with open(files_list_file) as fh:
         for filename in fh:
-            filename = filename.rstrip()
+            orig_filename = filename.rstrip()
+            filename = os.path.basename(orig_filename)
             filename_pts = filename.split(".")
 
             samplename = filename_pts[0]
@@ -30,7 +31,7 @@ def main():
             if not os.path.exists(dest_dir):
                 os.makedirs(dest_dir)
                 
-            cmd = "cp {} {}".format(filename, dest_dir)
+            cmd = "cp {} {}".format(orig_filename, dest_dir)
             subprocess.check_call(cmd, shell=True)
             print(cmd, file=sys.stderr)
 
