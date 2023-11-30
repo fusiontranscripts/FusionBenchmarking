@@ -89,7 +89,8 @@ def output(fout, prog, ntp, nfp, nltp = -1, nlfp = -1):
         precision = lprecision
         if lrecall > 0.0:
             fout.write("{}\t{}\t{}\t0\n".format(prog, recall, precision))
-            dauc = 0.5 * lrecall * lprecision
+            #dauc = 0.5 * lrecall * lprecision
+            dauc = lrecall * lprecision
     else:
         recall = ntp * 1.0 / ntruth
         precision = ntp * 1.0 / (ntp + nfp)
